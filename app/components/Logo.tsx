@@ -1,4 +1,4 @@
-const img = "http://localhost:3845/assets/d931e8fd7de66946336f1565ae5583c64ff39b10.png";
+const img = "/logo.png";
 
 export default function Logo({ className }: { className?: string }) {
   return (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import Logo from "./Logo";
 import { IconUser } from "./icons";
 
@@ -27,14 +28,16 @@ export default function Header() {
   return (
     <header className="absolute bg-white border-b border-black top-0 left-0 w-full h-[150px] z-50">
       <div className="flex items-center justify-between h-full px-[106px] max-w-[1920px] mx-auto">
-        <div className="flex gap-[5px] items-center">
+        <Link href="/" className="flex gap-[5px] items-center cursor-pointer">
           <Logo className="relative shrink-0 size-[100px]" />
           <div className="flex flex-col font-bold justify-center text-[#3a3a3a] text-[40px]">
             <p>Git-Fit</p>
           </div>
-        </div>
+        </Link>
         <div className="flex gap-[40px] items-center">
-          <p className="font-semibold text-[#191919] text-[40px]">레포지토리</p>
+          <Link href="/repositories" className="font-semibold text-[#191919] text-[40px] hover:text-[#bbfb4c] transition-colors cursor-pointer">
+            레포지토리
+          </Link>
           <p className="font-semibold text-[#191919] text-[40px]">리포트</p>
           <div className="relative" ref={dropdownRef}>
             <button
