@@ -38,7 +38,9 @@ export default function Header() {
           <Link href="/repositories" className="font-semibold text-[#191919] text-[40px] hover:text-[#bbfb4c] transition-colors cursor-pointer">
             레포지토리
           </Link>
-          <p className="font-semibold text-[#191919] text-[40px]">리포트</p>
+          <Link href="/reports" className="font-semibold text-[#191919] text-[40px] hover:text-[#bbfb4c] transition-colors cursor-pointer">
+            리포트
+          </Link>
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
