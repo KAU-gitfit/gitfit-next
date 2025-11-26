@@ -13,8 +13,19 @@ export function Pagination({
     <div className="flex gap-7 items-center justify-center">
       {/* Previous Button */}
       <button className="flex gap-2 items-center opacity-50 hover:opacity-75 transition-opacity">
-        <svg className="w-12 h-12 rotate-90" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M7 10L12 15L17 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <svg
+          className="w-12 h-12 rotate-90"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7 10L12 15L17 10"
+            stroke="white"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
         <span className="font-bold text-4xl text-white">Previous</span>
       </button>
@@ -37,8 +48,19 @@ export function Pagination({
       {/* Next Button */}
       <button className="flex gap-2 items-center hover:opacity-75 transition-opacity">
         <span className="font-bold text-4xl text-white">Next</span>
-        <svg className="w-12 h-12 rotate-[-90deg]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M7 10L12 15L17 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <svg
+          className="w-12 h-12 rotate-[-90deg]"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7 10L12 15L17 10"
+            stroke="white"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       </button>
     </div>

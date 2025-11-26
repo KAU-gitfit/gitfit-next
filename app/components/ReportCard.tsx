@@ -18,7 +18,9 @@ export function ReportCard({ title, language, date, score }: ReportCardProps) {
           <LanguageBadge language={language} />
           <div className="flex gap-3 items-center">
             <CalendarIcon />
-            <span className="font-medium text-[#d9d9d9] text-3xl whitespace-nowrap">생성일자: {date}</span>
+            <span className="font-medium text-[#d9d9d9] text-3xl whitespace-nowrap">
+              생성일자: {date}
+            </span>
           </div>
         </div>
       </div>

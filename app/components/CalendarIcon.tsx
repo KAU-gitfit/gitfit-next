@@ -1,9 +1,9 @@
 export function CalendarIcon() {
   return (
-    <svg 
-      className="w-14 h-14 flex-shrink-0" 
-      viewBox="0 0 48 48" 
-      fill="none" 
+    <svg
+      className="w-14 h-14 flex-shrink-0"
+      viewBox="0 0 48 48"
+      fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
