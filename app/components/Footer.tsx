@@ -2,9 +2,9 @@ export default function Footer() {
   return (
     <footer className="bg-[#191919] text-white w-full mt-auto">
       <div className="max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 xl:px-16 py-8 md:py-10 lg:py-12 xl:py-12">
-        <div className="flex flex-col md:flex-row justify-between items-start gap-8 md:gap-10">
+        <div className="flex flex-col md:flex-row justify-between items-start gap-8 md:gap-10 w-full">
           {/* 왼쪽 섹션 */}
-          <div className="flex flex-col gap-3 md:gap-3 lg:gap-4">
+          <div className="flex flex-col gap-3 md:gap-3 lg:gap-4 w-full md:w-auto">
             <h3 className="text-2xl md:text-2xl lg:text-3xl font-bold">Git-Fit</h3>
             <p className="text-base md:text-base lg:text-lg text-[#b0b0b0]">
               개발자의 성장을 위한 플랫폼
@@ -12,7 +12,7 @@ export default function Footer() {
           </div>
 
           {/* 오른쪽 섹션 */}
-          <div className="flex gap-12 md:gap-14 lg:gap-16">
+          <div className="flex gap-12 md:gap-14 lg:gap-16 w-full md:w-auto justify-between md:justify-start">
             <div className="flex flex-col gap-3 md:gap-3">
               <h4 className="text-lg md:text-lg lg:text-xl font-semibold mb-1 md:mb-1.5">서비스</h4>
               <a href="#" className="text-sm md:text-base lg:text-base xl:text-lg text-[#b0b0b0] hover:text-white transition-colors">
