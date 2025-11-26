@@ -1,44 +1,125 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { IconFileText } from "../components/icons";
+import { useState } from 'react';
+import { ReportCard } from '../components/ReportCard';
+import { SortButton } from '../components/SortButton';
+import { Pagination } from '../components/Pagination';
+
+const reports = [
+  {
+    id: 1,
+    title: 'Next.js 대시보드 리포트',
+    language: 'TypeScript',
+    date: '2025-01-17',
+    score: 87,
+  },
+  {
+    id: 2,
+    title: 'FastAPI 인증 서버 리포트',
+    language: 'Python',
+    date: '2025-01-15',
+    score: 87,
+  },
+  {
+    id: 3,
+    title: 'SpringBoot User Service 리포트',
+    language: 'Java',
+    date: '2025-01-11',
+    score: 87,
+  },
+  {
+    id: 4,
+    title: 'React Native Onboarding 리포트',
+    language: 'TypeScript',
+    date: '2025-01-11',
+    score: 87,
+  },
+  {
+    id: 5,
+    title: 'Go Microservice Template 리포트',
+    language: 'Go',
+    date: '2025-01-11',
+    score: 87,
+  },
+  {
+    id: 6,
+    title: 'Node Express API 리포트',
+    language: 'JavaScript',
+    date: '2025-01-08',
+    score: 87,
+  },
+  {
+    id: 7,
+    title: 'Django Blog Engine 리포트',
+    language: 'Django',
+    date: '2025-01-05',
+    score: 87,
+  },
+  {
+    id: 8,
+    title: 'Algorithm Practice 리포트',
+    language: 'C++',
+    date: '2025-01-01',
+    score: 87,
+  },
+];
 
 export default function ReportsPage() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const reportsPerPage = 8;
+  const totalPages = Math.ceil(reports.length / reportsPerPage);
+
+  const startIndex = (currentPage - 1) * reportsPerPage;
+  const endIndex = startIndex + reportsPerPage;
+  const paginatedReports = reports.slice(startIndex, endIndex);
+
   return (
-    <div className="bg-[#181818] min-h-screen pt-[250px]">
+    <div className="min-h-screen bg-[#181818] flex flex-col">
+      {/* Header spacing */}
+      <div className="h-[150px] flex-shrink-0"></div>
+
       {/* Title Section */}
-      <div className="px-[80px] py-[40px] h-[230px] flex items-start mb-[80px]">
-        <div className="flex flex-col gap-[30px]">
-          <h1 className="text-[96px] font-bold text-white">개발자 리포트</h1>
-        </div>
-      </div>
-
-      {/* Empty State Section */}
-      <div className="px-[80px] py-[24px]">
-        <div className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-[20px] h-[1078px] flex flex-col items-center justify-center gap-[100px] py-[154px]">
-          {/* File Icon */}
-          <div className="bg-[#4e6820] border-[5px] border-[#bbfb4c] rounded-full flex items-center justify-center p-[50px]">
-            <IconFileText size={200} />
-          </div>
-
-          {/* Empty State Text and Button */}
-          <div className="flex flex-col gap-[50px] items-center justify-center w-[1250px]">
-            <h2 className="text-[64px] font-bold text-white text-center">
-              아직 분석된 리포트가 없습니다
-            </h2>
-            <div className="text-[40px] font-bold text-[#d9d9d9] text-center">
-              <p className="mb-0">GitHub 레포지토리를 선택하고 분석을 시작해보세요.</p>
-              <p>코드 품질, 협업 능력, 성장 추세 등을 AI가 자동으로 분석합니다.</p>
+      <section className="flex-shrink-0 border-b border-[#d9d9d9]">
+        <div className="px-20 py-8 max-w-6xl mx-auto w-full">
+          <div className="flex items-start justify-between gap-20">
+            <div className="flex-1">
+              <h1 className="font-bold text-9xl text-white mb-8 leading-tight">리포트 목록</h1>
+              <p className="font-bold text-6xl text-[#d9d9d9] leading-tight">전체 리포트 수 : {reports.length}</p>
             </div>
-            <Link
-              href="/repositories"
-              className="bg-[#bbfb4c] rounded-[20px] px-[80px] py-[40px]"
-            >
-              <span className="text-[40px] font-semibold text-[#191919]">분석 시작하기</span>
-            </Link>
+            <div className="flex-shrink-0 pt-4">
+              <SortButton />
+            </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* Reports Grid */}
+      <section className="flex-grow px-20 py-16">
+        <div className="max-w-6xl mx-auto w-full">
+          <div className="space-y-12">
+            {paginatedReports.map((report) => (
+              <ReportCard
+                key={report.id}
+                title={report.title}
+                language={report.language}
+                date={report.date}
+                score={report.score}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pagination */}
+      <section className="flex-shrink-0 px-20 py-20">
+        <div className="flex justify-center">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </div>
+      </section>
     </div>
   );
 }
