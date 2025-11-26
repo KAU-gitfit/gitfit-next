@@ -41,40 +41,40 @@ export default function RepositoriesPage() {
   };
 
   return (
-    <div className="bg-[#181818] min-h-screen pt-[250px]">
+    <div className="bg-[#181818] min-h-screen pt-16 md:pt-18 lg:pt-20 xl:pt-20">
       {/* Title Section */}
-      <div className="px-[80px] py-[20px] h-[230px] flex items-end mb-[100px]">
-        <div className="flex flex-col gap-[30px] text-white w-[619px]">
-          <h1 className="text-[96px] font-bold">레포지토리 선택</h1>
-          <p className="text-[36px] font-light text-white/80">분석할 레포지토리를 선택하세요</p>
+      <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-4 md:py-6 lg:py-6 min-h-[120px] md:min-h-[140px] lg:min-h-[150px] flex items-end mb-10 md:mb-12 lg:mb-16 xl:mb-16 mt-16 md:mt-18 lg:mt-20 xl:mt-20">
+        <div className="flex flex-col gap-4 md:gap-5 lg:gap-6 text-white w-full max-w-4xl">
+          <h1 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-6xl font-bold">레포지토리 선택</h1>
+          <p className="text-lg sm:text-xl md:text-xl lg:text-2xl xl:text-2xl font-light text-white/80">분석할 레포지토리를 선택하세요</p>
         </div>
       </div>
 
       {/* Language Filter Section */}
-      <div className="px-[80px] mb-[100px]">
-        <div className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-[20px] p-[80px]">
-          <div className="flex flex-col gap-[40px]">
-            <h2 className="text-[40px] font-bold text-white">언어 필터</h2>
-            <div className="flex flex-wrap gap-[85px] items-center">
+      <div className="px-4 md:px-8 lg:px-12 xl:px-16 mb-10 md:mb-12 lg:mb-16 xl:mb-16">
+        <div className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-xl md:rounded-2xl lg:rounded-2xl p-6 md:p-8 lg:p-10 xl:p-12">
+          <div className="flex flex-col gap-6 md:gap-6 lg:gap-8">
+            <h2 className="text-2xl md:text-2xl lg:text-3xl xl:text-3xl font-bold text-white">언어 필터</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-6 lg:gap-8 xl:gap-10">
               {languages.map((lang) => (
                 <button
                   key={lang}
                   onClick={() => setSelectedLanguage(lang)}
-                  className="flex gap-[12px] items-center w-[15rem]"
+                  className="flex gap-2 md:gap-2.5 items-center"
                 >
-                  <div className="w-[48px] h-[48px] flex items-center justify-center">
+                  <div className="w-8 h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 flex items-center justify-center shrink-0">
                     {selectedLanguage === lang ? (
-                      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                      <svg width="100%" height="100%" viewBox="0 0 48 48" fill="none">
                         <circle cx="24" cy="24" r="10" fill="#BBFB4C" stroke="#BBFB4C" strokeWidth="2"/>
                         <circle cx="24" cy="24" r="18" stroke="#BBFB4C" strokeWidth="2"/>
                       </svg>
                     ) : (
-                      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                      <svg width="100%" height="100%" viewBox="0 0 48 48" fill="none">
                         <circle cx="24" cy="24" r="18" stroke="#BBFB4C" strokeWidth="2"/>
                       </svg>
                     )}
                   </div>
-                  <span className="text-[28px] font-bold text-white">{lang}</span>
+                  <span className="text-base md:text-base lg:text-lg xl:text-xl font-bold text-white">{lang}</span>
                 </button>
               ))}
             </div>
@@ -83,51 +83,51 @@ export default function RepositoriesPage() {
       </div>
 
       {/* Sort and Analyze Buttons */}
-      <div className="px-[80px] mb-[50px] flex gap-[50px] items-center">
-        <button className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-[20px] px-[50px] py-[30px]">
-          <span className="text-[36px] font-medium text-white">최신순 ▼</span>
+      <div className="px-4 md:px-8 lg:px-12 xl:px-16 mb-6 md:mb-8 lg:mb-10 flex flex-col sm:flex-row gap-4 md:gap-5 lg:gap-6 xl:gap-8 items-stretch sm:items-center">
+        <button className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-xl md:rounded-xl px-6 md:px-7 lg:px-8 xl:px-9 py-3 md:py-3.5 lg:py-4 xl:py-4">
+          <span className="text-lg md:text-lg lg:text-xl xl:text-xl font-medium text-white">최신순 ▼</span>
         </button>
-        <button className="bg-[#bbfb4c] border border-[#bbfb4c] rounded-[20px] px-[50px] py-[30px]">
-          <span className="text-[36px] font-medium text-black">분석하기</span>
+        <button className="bg-[#bbfb4c] border border-[#bbfb4c] rounded-xl md:rounded-xl px-6 md:px-7 lg:px-8 xl:px-9 py-3 md:py-3.5 lg:py-4 xl:py-4">
+          <span className="text-lg md:text-lg lg:text-xl xl:text-xl font-medium text-black">분석하기</span>
         </button>
       </div>
 
       {/* Repository List */}
-      <div className="px-[80px] mb-[100px]">
-        <div className="flex flex-col gap-[50px]">
+      <div className="px-4 md:px-8 lg:px-12 xl:px-16 mb-10 md:mb-12 lg:mb-16 xl:mb-16">
+        <div className="flex flex-col gap-6 md:gap-6 lg:gap-8 xl:gap-8">
           {repositories.map((repo) => (
             <div
               key={repo.id}
-              className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-[20px] px-[43px] py-[50px]"
+              className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-xl md:rounded-xl px-4 md:px-5 lg:px-6 xl:px-7 py-6 md:py-6 lg:py-7 xl:py-7"
             >
-              <div className="flex gap-[109px] items-center">
-                <div className="flex-1 flex flex-col gap-[24px]">
-                  <h3 className="text-[40px] font-bold text-white">{repo.name}</h3>
-                  <div className="flex gap-[50px] items-center">
-                    <div className="bg-[#4e6820] border border-[#bbfb4c] rounded-[20px] px-[30px] py-[5px] w-[250px] flex items-center justify-center">
-                      <span className="text-[32px] font-bold text-[#bbfb4c]">{repo.language}</span>
+              <div className="flex flex-col sm:flex-row gap-6 md:gap-6 lg:gap-8 xl:gap-10 items-start sm:items-center">
+                <div className="flex-1 flex flex-col gap-4 md:gap-4 lg:gap-5 w-full">
+                  <h3 className="text-xl md:text-xl lg:text-2xl xl:text-2xl font-bold text-white">{repo.name}</h3>
+                  <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 md:gap-3 lg:gap-4 xl:gap-5 items-start sm:items-center">
+                    <div className="bg-[#4e6820] border border-[#bbfb4c] rounded-lg md:rounded-lg lg:rounded-xl px-4 md:px-4 lg:px-5 xl:px-6 py-1 md:py-1 lg:py-1.5 min-w-[120px] md:min-w-[140px] lg:min-w-[150px] xl:min-w-[160px] flex items-center justify-center">
+                      <span className="text-base md:text-base lg:text-lg xl:text-lg font-bold text-[#bbfb4c]">{repo.language}</span>
                     </div>
-                    <div className="flex gap-[10px] items-center">
-                      <IconEye size={48} />
-                      <span className="text-[32px] font-medium text-[#d9d9d9]">{repo.visibility}</span>
+                    <div className="flex gap-2 md:gap-2 lg:gap-2.5 items-center">
+                      <IconEye size={20} />
+                      <span className="text-base md:text-base lg:text-lg xl:text-lg font-medium text-[#d9d9d9]">{repo.visibility}</span>
                     </div>
-                    <div className="flex gap-[10px] items-center">
-                      <IconCalendar size={48} />
-                      <span className="text-[32px] font-medium text-[#d9d9d9]">최근 푸시: {repo.lastPush}</span>
+                    <div className="flex gap-2 md:gap-2 lg:gap-2.5 items-center">
+                      <IconCalendar size={20} />
+                      <span className="text-base md:text-base lg:text-lg xl:text-lg font-medium text-[#d9d9d9]">최근 푸시: {repo.lastPush}</span>
                     </div>
                   </div>
                 </div>
                 <button
                   onClick={() => toggleRepository(repo.id)}
-                  className="w-[48px] h-[48px] flex items-center justify-center"
+                  className="w-8 h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 flex items-center justify-center shrink-0"
                 >
                   {repo.isSelected ? (
-                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <svg width="100%" height="100%" viewBox="0 0 48 48" fill="none">
                       <rect x="6" y="6" width="36" height="36" rx="4" stroke="white" strokeWidth="2" fill="white"/>
                       <path d="M14 24L22 32L34 16" stroke="#1f1f1f" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   ) : (
-                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <svg width="100%" height="100%" viewBox="0 0 48 48" fill="none">
                       <rect x="6" y="6" width="36" height="36" rx="4" stroke="white" strokeWidth="2"/>
                     </svg>
                   )}
@@ -139,26 +139,26 @@ export default function RepositoriesPage() {
       </div>
 
       {/* Pagination */}
-      <div className="px-[80px] pb-[100px] flex justify-center">
-        <div className="flex gap-[30px] items-center">
-          <button className="flex gap-[10px] items-center opacity-50">
-            <svg width="50" height="50" viewBox="0 0 50 50" className="rotate-90">
+      <div className="px-4 md:px-8 lg:px-12 xl:px-16 pb-10 md:pb-12 lg:pb-16 xl:pb-16 flex justify-center">
+        <div className="flex gap-4 md:gap-5 lg:gap-6 items-center flex-wrap justify-center">
+          <button className="flex gap-2 md:gap-2.5 items-center opacity-50">
+            <svg width="20" height="20" viewBox="0 0 50 50" className="rotate-90 md:w-6 md:h-6 lg:w-7 lg:h-7">
               <path d="M15 31.25L25 18.75L35 31.25" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            <span className="text-[40px] font-bold text-white">Previous</span>
+            <span className="text-base md:text-lg lg:text-lg xl:text-xl font-bold text-white hidden sm:inline">Previous</span>
           </button>
-          <button className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-[20px] px-[40px] py-[22px]">
-            <span className="text-[40px] font-medium text-white">1</span>
+          <button className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-lg md:rounded-lg lg:rounded-xl px-4 md:px-5 lg:px-6 xl:px-7 py-2 md:py-2.5 lg:py-3 xl:py-3">
+            <span className="text-base md:text-lg lg:text-lg xl:text-xl font-medium text-white">1</span>
           </button>
-          <button className="px-[40px] py-[22px]">
-            <span className="text-[40px] font-medium text-white">2</span>
+          <button className="px-4 md:px-5 lg:px-6 xl:px-7 py-2 md:py-2.5 lg:py-3 xl:py-3">
+            <span className="text-base md:text-lg lg:text-lg xl:text-xl font-medium text-white">2</span>
           </button>
-          <button className="px-[40px] py-[22px]">
-            <span className="text-[40px] font-medium text-white">3</span>
+          <button className="px-4 md:px-5 lg:px-6 xl:px-7 py-2 md:py-2.5 lg:py-3 xl:py-3">
+            <span className="text-base md:text-lg lg:text-lg xl:text-xl font-medium text-white">3</span>
           </button>
-          <button className="flex gap-[10px] items-center">
-            <span className="text-[40px] font-bold text-white">Next</span>
-            <svg width="50" height="50" viewBox="0 0 50 50" className="-rotate-90">
+          <button className="flex gap-2 md:gap-2.5 items-center">
+            <span className="text-base md:text-lg lg:text-lg xl:text-xl font-bold text-white hidden sm:inline">Next</span>
+            <svg width="20" height="20" viewBox="0 0 50 50" className="-rotate-90 md:w-6 md:h-6 lg:w-7 lg:h-7">
               <path d="M15 31.25L25 18.75L35 31.25" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
