@@ -28,7 +28,6 @@ export default function RootLayout({
     <html lang="ko">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
-        style={{ zoom: 0.85 }}
       >
         <Header />
         <main className="flex-1">
