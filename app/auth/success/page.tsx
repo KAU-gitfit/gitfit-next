@@ -1,9 +1,11 @@
 "use client";
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+export const revalidate = 0;
 
 import {useEffect} from "react";
 import {useSearchParams,useRouter} from "next/navigation";
 
-export const dynamic = "force-dynamic";
 
 export default function AuthSuccessPage(){
     const params = useSearchParams();
