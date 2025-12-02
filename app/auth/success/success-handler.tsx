@@ -14,10 +14,16 @@ export default function SuccessHandler() {
         const handleLogin = async () => {
             const token = params.get("token");
 
+            const getOAuthUrl = () => {
+                const baseUrl = process.env.NEXT_PUBLIC_GITHUB_AUTH_URL || "https://api.gitfit.site/oauth2/authorization/github";
+                const isDevelopment = process.env.NODE_ENV === "development";
+                return isDevelopment ? `${baseUrl}?env=local` : baseUrl;
+            };
+
             if (!token) {
                 setError(true);
                 setTimeout(() => {
-                    window.location.href = "https://api.gitfit.site/oauth2/authorization/github";
+                    window.location.href = getOAuthUrl();
                 }, 2000);
                 return;
             }
@@ -29,7 +35,7 @@ export default function SuccessHandler() {
                 console.error("Login error:", err);
                 setError(true);
                 setTimeout(() => {
-                    window.location.href = "https://api.gitfit.site/oauth2/authorization/github";
+                    window.location.href = getOAuthUrl();
                 }, 2000);
             }
         };

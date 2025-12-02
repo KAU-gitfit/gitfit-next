@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { apiPost } from "../lib/api";
+import { apiGet } from "../lib/api";
 
 interface User {
   id: string;
@@ -36,18 +36,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchUserInfo = async (token: string) => {
     try {
-      const res = await fetch("https://api.gitfit.site/api/user", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (res.ok) {
-        const userData = await res.json();
-        setUser(userData);
-      } else {
-        localStorage.removeItem("accessToken");
-      }
+      const res = await apiGet("/api/users/profile");
+      
+      setUser(res.data);
     } catch (error) {
       console.error("Failed to fetch user info:", error);
       localStorage.removeItem("accessToken");
@@ -58,17 +49,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (token: string) => {
     try {
-      // Call backend API to exchange GitHub token for JWT
-      const response = await apiPost("/api/auth/github/token", {
-        accessToken: token,
-      });
+      localStorage.setItem("accessToken", token);
 
-      // Store the JWT token from backend
-      const jwtToken = response.accessToken || response.token;
-      localStorage.setItem("accessToken", jwtToken);
-
-      // Fetch user info with the new JWT
-      await fetchUserInfo(jwtToken);
+      await fetchUserInfo(token);
     } catch (error) {
       console.error("Login failed:", error);
       localStorage.removeItem("accessToken");

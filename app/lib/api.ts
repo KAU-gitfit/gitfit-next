@@ -1,7 +1,9 @@
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.gitfit.site";
+
 export async function apiGet(url: string){
     const token = typeof window !== "undefined" ? localStorage.getItem("accessToken"): null;
 
-    const res = await fetch(`https://api.gitfit.site${url}`,{
+    const res = await fetch(`${API_BASE_URL}${url}`,{
         method : "GET",
         headers :{
             Authorization: token ? `Bearer ${token}` : "",
@@ -22,7 +24,7 @@ export async function apiPost(url: string, body: any, includeAuth: boolean = fal
         }
     }
 
-    const res = await fetch(`https://api.gitfit.site${url}`,{
+    const res = await fetch(`${API_BASE_URL}${url}`,{
         method: "POST",
         headers,
         body: JSON.stringify(body),
