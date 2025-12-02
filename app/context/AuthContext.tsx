@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { apiGet } from "../lib/api";
 
 interface User {
   id: string;
@@ -13,7 +14,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (token: string) => void;
+  login: (token: string) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -35,18 +36,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchUserInfo = async (token: string) => {
     try {
-      const res = await fetch("https://api.gitfit.site/api/user", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (res.ok) {
-        const userData = await res.json();
-        setUser(userData);
-      } else {
-        localStorage.removeItem("accessToken");
-      }
+      const res = await apiGet("/api/users/profile");
+      
+      setUser(res.data);
     } catch (error) {
       console.error("Failed to fetch user info:", error);
       localStorage.removeItem("accessToken");
@@ -55,9 +47,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const login = (token: string) => {
-    localStorage.setItem("accessToken", token);
-    fetchUserInfo(token);
+  const login = async (token: string) => {
+    try {
+      localStorage.setItem("accessToken", token);
+
+      await fetchUserInfo(token);
+    } catch (error) {
+      console.error("Login failed:", error);
+      localStorage.removeItem("accessToken");
+      throw error;
+    }
   };
 
   const logout = () => {

@@ -30,7 +30,10 @@ export default function Header() {
   }, [isDropdownOpen]);
 
   const handleLogin = () => {
-    window.location.href = "https://api.gitfit.site/oauth2/authorization/github";
+    const baseUrl = process.env.NEXT_PUBLIC_GITHUB_AUTH_URL || "https://api.gitfit.site/oauth2/authorization/github";
+    const isDevelopment = process.env.NODE_ENV === "development";
+    const oauthUrl = isDevelopment ? `${baseUrl}?env=local` : baseUrl;
+    window.location.href = oauthUrl;
   };
 
   const handleLogout = () => {

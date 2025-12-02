@@ -11,17 +11,36 @@ export default function SuccessHandler() {
     const [error, setError] = useState(false);
 
     useEffect(() => {
-        const token = params.get("token");
+        const handleLogin = async () => {
+            const token = params.get("token");
 
-        if (token) {
-            login(token);
-            router.replace("/home");
-        } else {
-            setError(true);
-            setTimeout(() => {
-                window.location.href = "https://api.gitfit.site/oauth2/authorization/github";
-            }, 2000);
-        }
+            const getOAuthUrl = () => {
+                const baseUrl = process.env.NEXT_PUBLIC_GITHUB_AUTH_URL || "https://api.gitfit.site/oauth2/authorization/github";
+                const isDevelopment = process.env.NODE_ENV === "development";
+                return isDevelopment ? `${baseUrl}?env=local` : baseUrl;
+            };
+
+            if (!token) {
+                setError(true);
+                setTimeout(() => {
+                    window.location.href = getOAuthUrl();
+                }, 2000);
+                return;
+            }
+
+            try {
+                await login(token);
+                router.replace("/home");
+            } catch (err) {
+                console.error("Login error:", err);
+                setError(true);
+                setTimeout(() => {
+                    window.location.href = getOAuthUrl();
+                }, 2000);
+            }
+        };
+
+        handleLogin();
     }, [params, router, login]);
 
     if (error) {
