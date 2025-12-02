@@ -4,11 +4,13 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import { apiGet } from "../lib/api";
 
 interface User {
-  id: string;
-  login: string;
-  name: string;
-  email: string;
+  userId: number;
+  githubId: string;
+  githubUsername: string;
+  displayName: string;
+  email: string | null;
   avatarUrl: string;
+  createdAt: string;
 }
 
 interface AuthContextType {
@@ -37,8 +39,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const fetchUserInfo = async (token: string) => {
     try {
       const res = await apiGet("/api/users/profile");
-      
-      setUser(res.data);
+
+      setUser(res.result);
     } catch (error) {
       console.error("Failed to fetch user info:", error);
       localStorage.removeItem("accessToken");
