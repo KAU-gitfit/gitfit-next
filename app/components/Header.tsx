@@ -84,9 +84,6 @@ export default function Header() {
                     </div>
                   )}
                   <button className="w-full px-4 md:px-5 py-3 md:py-3.5 text-left hover:bg-[#f5f5f5] transition-colors">
-                    <span className="text-[#191919] text-base md:text-lg lg:text-lg xl:text-xl font-medium">마이페이지</span>
-                  </button>
-                  <button className="w-full px-4 md:px-5 py-3 md:py-3.5 text-left hover:bg-[#f5f5f5] transition-colors">
                     <span className="text-[#191919] text-base md:text-lg lg:text-lg xl:text-xl font-medium">설정</span>
                   </button>
                   <div className="border-t border-[#e0e0e0] my-2" />
