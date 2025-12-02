@@ -30,7 +30,7 @@ export default function Header() {
   }, [isDropdownOpen]);
 
   const handleLogin = () => {
-    router.push("/login");
+    window.location.href = "https://api.gitfit.site/oauth2/authorization/github";
   };
 
   const handleLogout = () => {
