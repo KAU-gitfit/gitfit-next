@@ -79,8 +79,8 @@ export default function Header() {
                 <div className="absolute right-0 top-12 md:top-13 lg:top-14 xl:top-14 bg-white border-2 border-[#e0e0e0] rounded-xl shadow-lg w-56 md:w-60 lg:w-64 py-2 z-50">
                   {user && (
                     <div className="px-4 md:px-5 py-3 md:py-3.5 border-b border-[#e0e0e0]">
-                      <p className="text-[#191919] text-base md:text-lg lg:text-lg xl:text-xl font-semibold">{user.name || user.login}</p>
-                      <p className="text-[#666] text-xs md:text-sm mt-1">{user.email}</p>
+                      <p className="text-[#191919] text-base md:text-lg lg:text-lg xl:text-xl font-semibold">{user.displayName || user.githubUsername}</p>
+                      <p className="text-[#666] text-xs md:text-sm mt-1">{user.email || "이메일 없음"}</p>
                     </div>
                   )}
                   <button className="w-full px-4 md:px-5 py-3 md:py-3.5 text-left hover:bg-[#f5f5f5] transition-colors">
