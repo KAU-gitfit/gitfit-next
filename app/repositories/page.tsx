@@ -51,7 +51,7 @@ export default function RepositoriesPage() {
     const token = localStorage.getItem("accessToken");
 
     if(!token){
-      router.push("/login");
+      window.location.href = "https://api.gitfit.site/oauth2/authorization/github";
       return;
     }
     fetch("https://api.gitfit.site/api/repositories",{

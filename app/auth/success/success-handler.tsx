@@ -19,7 +19,7 @@ export default function SuccessHandler() {
         } else {
             setError(true);
             setTimeout(() => {
-                router.replace("/login");
+                window.location.href = "https://api.gitfit.site/oauth2/authorization/github";
             }, 2000);
         }
     }, [params, router, login]);
@@ -29,7 +29,7 @@ export default function SuccessHandler() {
             <div className="flex items-center justify-center min-h-screen bg-[#181818]">
                 <div className="text-center">
                     <p className="text-red-500 text-xl mb-4">로그인에 실패했습니다.</p>
-                    <p className="text-[#acacac]">로그인 페이지로 이동합니다...</p>
+                    <p className="text-[#acacac]">다시 시도합니다...</p>
                 </div>
             </div>
         );
