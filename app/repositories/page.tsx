@@ -45,6 +45,7 @@ export default function RepositoriesPage() {
   //기본 렌더링 정보
   const [repositories, setRepositories] = useState<Repository[]>(mockRepositories);
   const [selectedLanguage, setSelectedLanguage] = useState("전체");
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   //로그인 토큰 확인 및 백엔드 API 요청
   useEffect(() => {
@@ -54,6 +55,8 @@ export default function RepositoriesPage() {
       window.location.href = "https://api.gitfit.site/oauth2/authorization/github";
       return;
     }
+
+    setIsCheckingAuth(false);
     fetch("https://api.gitfit.site/api/repositories",{
       headers:{
         Authorization : `Bearer ${token}`,
@@ -86,6 +89,16 @@ export default function RepositoriesPage() {
       )
     );
   };
+
+  if (isCheckingAuth) {
+    return (
+      <div className="bg-[#181818] min-h-screen w-full flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-white text-xl">로그인 확인 중...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#181818] min-h-screen pt-16 md:pt-18 lg:pt-20 xl:pt-20">
