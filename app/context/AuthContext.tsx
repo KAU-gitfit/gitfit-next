@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { apiPost } from "../lib/api";
 
 interface User {
   id: string;
@@ -13,7 +14,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (token: string) => void;
+  login: (token: string) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -55,9 +56,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const login = (token: string) => {
-    localStorage.setItem("accessToken", token);
-    fetchUserInfo(token);
+  const login = async (token: string) => {
+    try {
+      // Call backend API to exchange GitHub token for JWT
+      const response = await apiPost("/api/auth/github/token", {
+        accessToken: token,
+      });
+
+      // Store the JWT token from backend
+      const jwtToken = response.accessToken || response.token;
+      localStorage.setItem("accessToken", jwtToken);
+
+      // Fetch user info with the new JWT
+      await fetchUserInfo(jwtToken);
+    } catch (error) {
+      console.error("Login failed:", error);
+      localStorage.removeItem("accessToken");
+      throw error;
+    }
   };
 
   const logout = () => {
