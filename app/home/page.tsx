@@ -17,6 +17,10 @@ export default function Home() {
     window.location.href = "https://api.gitfit.site/oauth2/authorization/github";
   };
 
+  const handleGoToRepositories = () => {
+    window.location.href = "/repositories";
+  };
+
   return (
     <div className="bg-[#181818] min-h-screen flex flex-col relative w-full">
       {/* 배경 깃털 장식 - 대형 화면에서만 표시 */}
@@ -74,7 +78,7 @@ export default function Home() {
               Git-Fit으로 당신의 진짜 실력을 증명하고 최고의 기업에 지원하세요.
             </p>
           </div>
-          <button className="bg-[#bbfb4c] flex gap-2 md:gap-3 items-center justify-center px-8 py-4 md:px-10 md:py-5 lg:px-10 lg:py-5 rounded-2xl md:rounded-2xl w-full sm:w-auto">
+          <button onClick={handleGoToRepositories} className="bg-[#bbfb4c] flex gap-2 md:gap-3 items-center justify-center px-8 py-4 md:px-10 md:py-5 lg:px-10 lg:py-5 rounded-2xl md:rounded-2xl w-full sm:w-auto">
             <span className="font-semibold text-[#3a3a3c] text-lg md:text-xl lg:text-xl whitespace-pre">역량 강화하기</span>
           </button>
         </section>
