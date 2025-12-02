@@ -3,6 +3,7 @@
 import {useEffect, useState} from "react";
 import {useRouter} from "next/navigation"; //로그인 실패할 경우에 리다이렉트 경로
 import { IconEye, IconCalendar } from "../components/icons";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 //백엔드에서 보내는 JSON 구조
 type BackendRepo = {
@@ -45,15 +46,18 @@ export default function RepositoriesPage() {
   //기본 렌더링 정보
   const [repositories, setRepositories] = useState<Repository[]>(mockRepositories);
   const [selectedLanguage, setSelectedLanguage] = useState("전체");
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   //로그인 토큰 확인 및 백엔드 API 요청
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
 
     if(!token){
-      router.push("/login");
+      window.location.href = "https://api.gitfit.site/oauth2/authorization/github";
       return;
     }
+
+    setIsCheckingAuth(false);
     fetch("https://api.gitfit.site/api/repositories",{
       headers:{
         Authorization : `Bearer ${token}`,
@@ -86,6 +90,10 @@ export default function RepositoriesPage() {
       )
     );
   };
+
+  if (isCheckingAuth) {
+    return <LoadingSpinner message="로그인 확인 중..." />;
+  }
 
   return (
     <div className="bg-[#181818] min-h-screen pt-16 md:pt-18 lg:pt-20 xl:pt-20">
