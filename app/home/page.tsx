@@ -13,6 +13,10 @@ const imgImage52 = "/icon5.png";
 // 프레임 및 프로필 이미지는 필요시 추가
 
 export default function Home() {
+  const handleGithubLogin = () => {
+    window.location.href = "https://api.gitfit.site/oauth2/authorization/github";
+  };
+
   return (
     <div className="bg-[#181818] min-h-screen flex flex-col relative w-full">
       {/* 배경 깃털 장식 - 대형 화면에서만 표시 */}
@@ -329,7 +333,7 @@ export default function Home() {
               <span className="text-[#bbfb4c]">Git-Fit</span>과 함께 성공적인 취업의 첫 걸음을 내딛으세요.
             </p>
           </div>
-          <button className="bg-[#bbfb4c] flex gap-2 md:gap-3 items-center justify-center px-8 py-4 md:px-10 md:py-5 lg:px-10 lg:py-5 rounded-xl md:rounded-2xl w-full sm:w-auto">
+          <button onClick={handleGithubLogin} className="bg-[#bbfb4c] flex gap-2 md:gap-3 items-center justify-center px-8 py-4 md:px-10 md:py-5 lg:px-10 lg:py-5 rounded-xl md:rounded-2xl w-full sm:w-auto">
             <span className="font-bold text-lg md:text-xl lg:text-xl text-black whitespace-pre">깃허브 계정 연동하기</span>
           </button>
         </section>
