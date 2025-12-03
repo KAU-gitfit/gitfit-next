@@ -1,11 +1,15 @@
 "use client";
 import { useState, useRef } from "react";
 import Header from "../components/Header";
+import Image from "next/image";
 import { useProfile } from "@/app/context/ProfileContext";
+import { useDeveloperName } from "@/app/context/DeveloperNameContext";
 
 export default function SettingsPage() {
-  const [userName, setUserName] = useState("김아무개");
   const { profileImage, setProfileImage } = useProfile();
+  const { developerName: contextDeveloperName, setDeveloperName } =
+    useDeveloperName();
+  const [userName, setUserName] = useState(contextDeveloperName);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,6 +30,7 @@ export default function SettingsPage() {
   };
 
   const handleSaveChanges = () => {
+    setDeveloperName(userName);
     alert(`사용자 이름이 "${userName}"으로 변경되었습니다.`);
   };
 
@@ -67,9 +72,11 @@ export default function SettingsPage() {
             {/* 프로필 원형 */}
             <div className="w-48 md:w-56 lg:w-64 aspect-square bg-[#4e6820] border-4 md:border-5 border-[#bbfb4c] rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
               {profileImage ? (
-                <img
+                <Image
                   src={profileImage}
                   alt="프로필"
+                  width={256} // 대충 프로필 원 크기 기준으로 적당히
+                  height={256}
                   className="w-full h-full object-cover"
                 />
               ) : (
