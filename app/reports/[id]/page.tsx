@@ -1,13 +1,14 @@
 "use client";
 
-import { useRouter, useParams } from "next/navigation";
-import Link from "next/link";
+//import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
+//import Link from "next/link";
 import { mockDeveloperReports } from "@/mock/devReports";
 import { useRef, useEffect, useState } from "react";
 import { useDeveloperName } from "@/app/context/DeveloperNameContext";
 
 export default function ReportDetailPage() {
-  const router = useRouter();
+  //  const router = useRouter();
   const params = useParams();
   const reportId = params.id as string;
   const contentRef = useRef<HTMLDivElement>(null);

@@ -66,7 +66,7 @@ function ReportCard({ report }: { report: DeveloperReport }) {
             {/* Created Date */}
             <div className="flex items-center gap-2 md:gap-3">
               <Image
-                src="/calendar.svg"
+                src="/Calendar.svg"
                 alt="생성일 아이콘"
                 width={16}
                 height={16}
