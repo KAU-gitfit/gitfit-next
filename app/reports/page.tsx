@@ -1,9 +1,28 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { IconFileText } from "../components/icons";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function ReportsPage() {
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      window.location.href = "https://api.gitfit.site/oauth2/authorization/github";
+      return;
+    }
+
+    setIsCheckingAuth(false);
+  }, []);
+
+  if (isCheckingAuth) {
+    return <LoadingSpinner message="로그인 확인 중..." />;
+  }
+
   return (
     <div className="bg-[#181818] min-h-screen pt-16 md:pt-18 lg:pt-20 xl:pt-20">
       {/* Title Section */}

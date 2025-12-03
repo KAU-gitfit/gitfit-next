@@ -1,15 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import {useEffect, useState} from "react";
+import {useRouter} from "next/navigation"; //로그인 실패할 경우에 리다이렉트 경로
 import { IconEye, IconCalendar } from "../components/icons";
+import LoadingSpinner from "../components/LoadingSpinner";
 
-type Repository = {
-  id: string;
+//백엔드에서 보내는 JSON 구조
+type BackendRepo = {
+  id: number;
   name: string;
-  language: string;
-  visibility: "Public" | "Private";
-  lastPush: string;
-  isSelected: boolean;
+  language: string | null;
+  private : boolean;
+  updated_at : string;
+};
+
+//프론트 UI에서 사용하는 데이터 구조
+type Repository = {
+  id : string;
+  name : string;
+  language : string;
+  visibility : "Public" | "Private";
+  lastPush : string;
+  isSelected : boolean;
+
 };
 
 const mockRepositories: Repository[] = [
@@ -28,9 +41,47 @@ const mockRepositories: Repository[] = [
 const languages = ["전체", "TypeScript", "JavaScript", "Python", "Java", "Go", "C", "C++", "Ruby", "Django"];
 
 export default function RepositoriesPage() {
+  const router = useRouter();
+
+  //기본 렌더링 정보
   const [repositories, setRepositories] = useState<Repository[]>(mockRepositories);
   const [selectedLanguage, setSelectedLanguage] = useState("전체");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  //로그인 토큰 확인 및 백엔드 API 요청
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+
+    if(!token){
+      window.location.href = "https://api.gitfit.site/oauth2/authorization/github";
+      return;
+    }
+
+    setIsCheckingAuth(false);
+    fetch("https://api.gitfit.site/api/repositories",{
+      headers:{
+        Authorization : `Bearer ${token}`,
+      },
+    })
+        .then(res => res.json())
+        .then(data => {
+          if(!data.data) return ; {
+            //백엔드를 프론트 타입으로 변환
+            const converted : Repository[] = data.data.map((repo:BackendRepo) =>({
+              id: repo.id.toString(),
+              name: repo.name,
+              language : repo.language ?? "Unknown",
+              visibility : repo.private ? "Private" : "Public",
+              lastPush : repo.updated_at.slice(0,10),
+              isSelected:false,
+            }));
+            setRepositories(converted);
+          }
+        })
+        .catch(err =>{
+          console.error(err);
+        });
+  }, [router])
 
   const toggleRepository = (id: string) => {
     setRepositories(repos =>
@@ -39,6 +90,10 @@ export default function RepositoriesPage() {
       )
     );
   };
+
+  if (isCheckingAuth) {
+    return <LoadingSpinner message="로그인 확인 중..." />;
+  }
 
   return (
     <div className="bg-[#181818] min-h-screen pt-16 md:pt-18 lg:pt-20 xl:pt-20">
