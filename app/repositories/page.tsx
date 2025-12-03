@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"; //로그인 실패할 경우에 리
 import { IconEye, IconCalendar } from "../components/icons";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { mockDeveloperReports } from "@/mock/devReports";
+import { apiGet } from "../lib/api";
 
 //백엔드 API 응답 래퍼 구조
 type ApiResponse<T> = {
@@ -67,12 +68,7 @@ export default function RepositoriesPage() {
     }
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsCheckingAuth(false);
-    fetch("https://api.gitfit.site/api/repositories", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
+    apiGet("/api/repositories")
       .then((data: ApiResponse<BackendRepo>) => {
         if (!data.result || !Array.isArray(data.result)) return;
         //백엔드를 프론트 타입으로 변환
