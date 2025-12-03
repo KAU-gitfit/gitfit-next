@@ -35,89 +35,6 @@ type Repository = {
   isSelected: boolean;
 };
 
-const mockRepositories: Repository[] = [
-  {
-    id: "1",
-    name: "next-commerce-starter",
-    language: "TypeScript",
-    visibility: "Public",
-    lastPush: "2025-01-17",
-    isSelected: true,
-  },
-  {
-    id: "2",
-    name: "awesome-js-utils",
-    language: "JavaScript",
-    visibility: "Public",
-    lastPush: "2025-01-16",
-    isSelected: false,
-  },
-  {
-    id: "3",
-    name: "fastapi-microservice-template",
-    language: "Python",
-    visibility: "Public",
-    lastPush: "2025-01-15",
-    isSelected: false,
-  },
-  {
-    id: "4",
-    name: "rust-cli-boilerplate",
-    language: "Rust",
-    visibility: "Private",
-    lastPush: "2025-01-14",
-    isSelected: false,
-  },
-  {
-    id: "5",
-    name: "react-native-login-kit",
-    language: "TypeScript",
-    visibility: "Public",
-    lastPush: "2025-01-13",
-    isSelected: false,
-  },
-  {
-    id: "6",
-    name: "node-express-auth",
-    language: "JavaScript",
-    visibility: "Public",
-    lastPush: "2025-01-12",
-    isSelected: false,
-  },
-  {
-    id: "7",
-    name: "springboot-user-service",
-    language: "Java",
-    visibility: "Private",
-    lastPush: "2025-01-11",
-    isSelected: false,
-  },
-  {
-    id: "8",
-    name: "algo-playground",
-    language: "C++",
-    visibility: "Public",
-    lastPush: "2025-01-10",
-    isSelected: false,
-  },
-  {
-    id: "9",
-    name: "django-blog-engine",
-    language: "Django",
-    visibility: "Public",
-    lastPush: "2025-01-09",
-    isSelected: false,
-  },
-  {
-    id: "10",
-    name: "cpp-image-processor",
-    language: "C++",
-    visibility: "Public",
-    lastPush: "2025-01-08",
-    isSelected: false,
-  },
-];
-
 const languages = [
   "전체",
   "TypeScript",
@@ -135,8 +52,7 @@ export default function RepositoriesPage() {
   const router = useRouter();
 
   //기본 렌더링 정보
-  const [repositories, setRepositories] =
-    useState<Repository[]>(mockRepositories);
+  const [repositories, setRepositories] = useState<Repository[]>([]);
   const [selectedLanguage, setSelectedLanguage] = useState("전체");
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
