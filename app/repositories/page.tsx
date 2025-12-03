@@ -5,14 +5,25 @@ import { useRouter } from "next/navigation"; //로그인 실패할 경우에 리
 import { IconEye, IconCalendar } from "../components/icons";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { mockDeveloperReports } from "@/mock/devReports";
+import { apiGet } from "../lib/api";
+
+//백엔드 API 응답 래퍼 구조
+type ApiResponse<T> = {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: T[];
+};
 
 //백엔드에서 보내는 JSON 구조
 type BackendRepo = {
   id: number;
-  name: string;
+  ownerType: string | null;
+  ownerName: string | null;
+  full_name: string;
   language: string | null;
   private: boolean;
-  updated_at: string;
+  pushed_at: string;
 };
 
 //프론트 UI에서 사용하는 데이터 구조
@@ -24,89 +35,6 @@ type Repository = {
   lastPush: string;
   isSelected: boolean;
 };
-
-const mockRepositories: Repository[] = [
-  {
-    id: "1",
-    name: "next-commerce-starter",
-    language: "TypeScript",
-    visibility: "Public",
-    lastPush: "2025-01-17",
-    isSelected: true,
-  },
-  {
-    id: "2",
-    name: "awesome-js-utils",
-    language: "JavaScript",
-    visibility: "Public",
-    lastPush: "2025-01-16",
-    isSelected: false,
-  },
-  {
-    id: "3",
-    name: "fastapi-microservice-template",
-    language: "Python",
-    visibility: "Public",
-    lastPush: "2025-01-15",
-    isSelected: false,
-  },
-  {
-    id: "4",
-    name: "rust-cli-boilerplate",
-    language: "Rust",
-    visibility: "Private",
-    lastPush: "2025-01-14",
-    isSelected: false,
-  },
-  {
-    id: "5",
-    name: "react-native-login-kit",
-    language: "TypeScript",
-    visibility: "Public",
-    lastPush: "2025-01-13",
-    isSelected: false,
-  },
-  {
-    id: "6",
-    name: "node-express-auth",
-    language: "JavaScript",
-    visibility: "Public",
-    lastPush: "2025-01-12",
-    isSelected: false,
-  },
-  {
-    id: "7",
-    name: "springboot-user-service",
-    language: "Java",
-    visibility: "Private",
-    lastPush: "2025-01-11",
-    isSelected: false,
-  },
-  {
-    id: "8",
-    name: "algo-playground",
-    language: "C++",
-    visibility: "Public",
-    lastPush: "2025-01-10",
-    isSelected: false,
-  },
-  {
-    id: "9",
-    name: "django-blog-engine",
-    language: "Django",
-    visibility: "Public",
-    lastPush: "2025-01-09",
-    isSelected: false,
-  },
-  {
-    id: "10",
-    name: "cpp-image-processor",
-    language: "C++",
-    visibility: "Public",
-    lastPush: "2025-01-08",
-    isSelected: false,
-  },
-];
 
 const languages = [
   "전체",
@@ -125,8 +53,7 @@ export default function RepositoriesPage() {
   const router = useRouter();
 
   //기본 렌더링 정보
-  const [repositories, setRepositories] =
-    useState<Repository[]>(mockRepositories);
+  const [repositories, setRepositories] = useState<Repository[]>([]);
   const [selectedLanguage, setSelectedLanguage] = useState("전체");
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
@@ -141,28 +68,21 @@ export default function RepositoriesPage() {
     }
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsCheckingAuth(false);
-    fetch("https://api.gitfit.site/api/repositories", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.data) return;
-        {
-          //백엔드를 프론트 타입으로 변환
-          const converted: Repository[] = data.data.map(
-            (repo: BackendRepo) => ({
-              id: repo.id.toString(),
-              name: repo.name,
-              language: repo.language ?? "Unknown",
-              visibility: repo.private ? "Private" : "Public",
-              lastPush: repo.updated_at.slice(0, 10),
-              isSelected: false,
-            })
-          );
-          setRepositories(converted);
-        }
+    apiGet("/api/repositories")
+      .then((data: ApiResponse<BackendRepo>) => {
+        if (!data.result || !Array.isArray(data.result)) return;
+        //백엔드를 프론트 타입으로 변환
+        const converted: Repository[] = data.result.map(
+          (repo: BackendRepo) => ({
+            id: repo.id.toString(),
+            name: repo.full_name,
+            language: repo.language ?? "Unknown",
+            visibility: repo.private ? "Private" : "Public",
+            lastPush: repo.pushed_at.slice(0, 10),
+            isSelected: false,
+          })
+        );
+        setRepositories(converted);
       })
       .catch((err) => {
         console.error(err);
