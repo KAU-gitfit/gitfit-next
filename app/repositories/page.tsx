@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation"; //로그인 실패할 경우에 리다이렉트 경로
 import { IconEye, IconCalendar } from "../components/icons";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -55,6 +55,7 @@ export default function RepositoriesPage() {
   //기본 렌더링 정보
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [selectedLanguage, setSelectedLanguage] = useState("전체");
+  const [sortOrder, setSortOrder] = useState<"latest" | "oldest">("latest");
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   //로그인 토큰 확인 및 백엔드 API 요청
@@ -88,6 +89,27 @@ export default function RepositoriesPage() {
         console.error(err);
       });
   }, [router]);
+
+  // 언어 필터링 및 정렬 로직
+  const filteredRepositories = useMemo(() => {
+    let filtered =
+      selectedLanguage === "전체"
+        ? repositories
+        : repositories.filter((repo) => repo.language === selectedLanguage);
+
+    // 정렬
+    return filtered.sort((a, b) => {
+      if (sortOrder === "latest") {
+        return b.lastPush.localeCompare(a.lastPush);
+      } else {
+        return a.lastPush.localeCompare(b.lastPush);
+      }
+    });
+  }, [repositories, selectedLanguage, sortOrder]);
+
+  const toggleSortOrder = () => {
+    setSortOrder((prev) => (prev === "latest" ? "oldest" : "latest"));
+  };
 
   const toggleRepository = (id: string) => {
     setRepositories((repos) =>
@@ -188,9 +210,12 @@ export default function RepositoriesPage() {
 
       {/* Sort and Analyze Buttons */}
       <div className="px-4 md:px-8 lg:px-12 xl:px-16 mb-6 md:mb-8 lg:mb-10 flex flex-col sm:flex-row gap-4 md:gap-5 lg:gap-6 xl:gap-8 items-stretch sm:items-center">
-        <button className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-xl md:rounded-xl px-6 md:px-7 lg:px-8 xl:px-9 py-3 md:py-3.5 lg:py-4 xl:py-4">
+        <button
+          onClick={toggleSortOrder}
+          className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-xl md:rounded-xl px-6 md:px-7 lg:px-8 xl:px-9 py-3 md:py-3.5 lg:py-4 xl:py-4 hover:bg-[#2a2a2a] transition-colors"
+        >
           <span className="text-lg md:text-lg lg:text-xl xl:text-xl font-medium text-white">
-            최신순 ▼
+            {sortOrder === "latest" ? "최신순 ▼" : "오래된순 ▲"}
           </span>
         </button>
         <button
@@ -206,7 +231,7 @@ export default function RepositoriesPage() {
       {/* Repository List */}
       <div className="px-4 md:px-8 lg:px-12 xl:px-16 mb-10 md:mb-12 lg:mb-16 xl:mb-16">
         <div className="flex flex-col gap-6 md:gap-6 lg:gap-8 xl:gap-8">
-          {repositories.map((repo) => (
+          {filteredRepositories.map((repo) => (
             <div
               key={repo.id}
               className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-xl md:rounded-xl px-4 md:px-5 lg:px-6 xl:px-7 py-6 md:py-6 lg:py-7 xl:py-7"
