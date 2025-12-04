@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation"; //로그인 실패할 경우에 리다이렉트 경로
 import { IconEye, IconCalendar } from "../components/icons";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -88,6 +88,14 @@ export default function RepositoriesPage() {
         console.error(err);
       });
   }, [router]);
+
+  // 언어 필터링 로직
+  const filteredRepositories = useMemo(() => {
+    if (selectedLanguage === "전체") {
+      return repositories;
+    }
+    return repositories.filter((repo) => repo.language === selectedLanguage);
+  }, [repositories, selectedLanguage]);
 
   const toggleRepository = (id: string) => {
     setRepositories((repos) =>
@@ -206,7 +214,7 @@ export default function RepositoriesPage() {
       {/* Repository List */}
       <div className="px-4 md:px-8 lg:px-12 xl:px-16 mb-10 md:mb-12 lg:mb-16 xl:mb-16">
         <div className="flex flex-col gap-6 md:gap-6 lg:gap-8 xl:gap-8">
-          {repositories.map((repo) => (
+          {filteredRepositories.map((repo) => (
             <div
               key={repo.id}
               className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-xl md:rounded-xl px-4 md:px-5 lg:px-6 xl:px-7 py-6 md:py-6 lg:py-7 xl:py-7"
