@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IconCheckCircle } from "../components/icons";
 
 // 이미지 상수들
@@ -93,7 +93,6 @@ function TestimonialsMarquee() {
         </div>
       </div>
 
-      {}
       <style jsx>{`
         .marqueeTrack {
           will-change: transform;
