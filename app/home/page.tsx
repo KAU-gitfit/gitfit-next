@@ -92,29 +92,6 @@ function TestimonialsMarquee() {
           ))}
         </div>
       </div>
-
-      <style jsx>{`
-        .marqueeTrack {
-          will-change: transform;
-          animation: marquee 28s linear infinite;
-        }
-
-        @keyframes marquee {
-          from {
-            transform: translate3d(0, 0, 0);
-          }
-          to {
-            transform: translate3d(-50%, 0, 0);
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .marqueeTrack {
-            animation: none;
-            transform: translate3d(0, 0, 0);
-          }
-        }
-      `}</style>
     </div>
   );
 }
