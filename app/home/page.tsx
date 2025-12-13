@@ -352,7 +352,7 @@ export default function Home() {
           </div>
           <button
             onClick={handleGoToRepositories}
-            className="bg-[#bbfb4c] flex gap-2 md:gap-3 items-center justify-center px-8 py-4 md:px-10 md:py-5 lg:px-10 lg:py-5 rounded-2xl md:rounded-2xl w-full sm:w-auto"
+            className="bg-[#bbfb4c] flex gap-2 md:gap-3 items-center justify-center px-8 py-4 md:px-10 md:py-5 lg:px-10 lg:py-5 rounded-2xl md:rounded-2xl w-full sm:w-auto hover:bg-[#a8e03c] transition-colors"
           >
             <span className="font-semibold text-[#3a3a3c] text-lg md:text-xl lg:text-xl whitespace-pre">
               역량 강화하기
@@ -599,9 +599,9 @@ export default function Home() {
           </div>
           <button
             onClick={handleGithubLogin}
-            className="bg-[#bbfb4c] flex gap-2 md:gap-3 items-center justify-center px-8 py-4 md:px-10 md:py-5 lg:px-10 lg:py-5 rounded-xl md:rounded-2xl w-full sm:w-auto"
+            className="bg-[#bbfb4c] flex gap-2 md:gap-3 items-center justify-center px-8 py-4 md:px-10 md:py-5 lg:px-10 lg:py-5 rounded-xl md:rounded-2xl w-full sm:w-auto hover:bg-[#a8e03c] transition-colors"
           >
-            <span className="font-bold text-lg md:text-xl lg:text-xl text-black whitespace-pre">
+            <span className="font-bold text-lg md:text-xl lg:text-xl text-black whitespace-pre ">
               깃허브 계정 연동하기
             </span>
           </button>

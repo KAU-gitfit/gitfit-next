@@ -7,6 +7,73 @@ import { mockDeveloperReports } from "@/mock/devReports";
 import { useRef, useEffect, useState } from "react";
 import { useDeveloperName } from "@/app/context/DeveloperNameContext";
 
+// 점수 카드 컴포넌트
+function ScoreCard({
+  title,
+  score,
+  delayMs = 0,
+}: {
+  title: string;
+  score: number;
+  delayMs?: number;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [run, setRun] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          requestAnimationFrame(() => setRun(true));
+          io.disconnect();
+        }
+      },
+      {
+        root: null,
+        rootMargin: "-25% 0px -25% 0px",
+        threshold: 0.25,
+      }
+    );
+
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  const clamped = Math.max(0, Math.min(100, score));
+
+  return (
+    <div
+      ref={ref}
+      className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-xl p-6 md:p-8"
+    >
+      <div className="flex flex-col gap-4 md:gap-5">
+        <p className="text-6xl md:text-7xl font-bold text-white">{score}</p>
+        <p className="text-lg md:text-xl lg:text-2xl font-bold text-[#d9d9d9]">
+          {title}
+        </p>
+
+        {/* 진행 바 */}
+        <div className="bg-[#313131] rounded-full h-2 md:h-3 overflow-hidden">
+          <div
+            className="bg-[#bbfb4c] h-full rounded-full"
+            style={{
+              width: run ? `${clamped}%` : "0%",
+              transitionProperty: "width",
+              transitionDuration: "900ms",
+              transitionTimingFunction: "cubic-bezier(0.22, 0.61, 0.36, 1)",
+              transitionDelay: `${delayMs}ms`,
+              willChange: "width",
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ReportDetailPage() {
   //  const router = useRouter();
   const params = useParams();
@@ -27,6 +94,10 @@ export default function ReportDetailPage() {
     if (!contentRef.current || !report) return;
 
     try {
+      const fillPageBg = () => {
+        pdf.setFillColor(24, 24, 24); // #181818
+        pdf.rect(0, 0, pdfWidth, pdfHeight, "F");
+      };
       // 동적으로 html2canvas와 jsPDF import
       const html2canvas = (await import("html2canvas")).default;
       const { jsPDF } = await import("jspdf");
@@ -40,9 +111,18 @@ export default function ReportDetailPage() {
         backgroundColor: "#181818",
         allowTaint: true,
         logging: false,
-        // 전체 요소의 실제 높이를 기반으로 캡처
         windowHeight: element.scrollHeight,
         windowWidth: element.scrollWidth,
+        ignoreElements: (el) => el.classList?.contains("pdf-hide"),
+
+        onclone: (doc) => {
+          const score = doc.querySelector(
+            "[data-score-center]"
+          ) as HTMLElement | null;
+          if (score) {
+            score.style.transform = "translateY(-0.36em)"; // <- 여기만 조절
+          }
+        },
       });
 
       const imgData = canvas.toDataURL("image/png");
@@ -64,14 +144,15 @@ export default function ReportDetailPage() {
       let position = 0;
 
       // 첫 페이지에 이미지 추가
+      fillPageBg();
       pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
 
-      // 남은 부분을 여러 페이지에 나누어 추가
       let heightLeft = imgHeight - pdfHeight;
 
       while (heightLeft > 0) {
         position = heightLeft - imgHeight;
         pdf.addPage();
+        fillPageBg();
         pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
         heightLeft -= pdfHeight;
       }
@@ -108,7 +189,7 @@ export default function ReportDetailPage() {
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white">
                   개발자 리포트
                 </h1>
-                <button className="p-2 hover:bg-[#2a2a2a] rounded-lg transition-colors">
+                <button className="pdf-hide p-2 hover:bg-[#2a2a2a] rounded-lg transition-colors">
                   <svg
                     className="w-8 h-8 md:w-10 md:h-10 text-white"
                     fill="none"
@@ -132,7 +213,7 @@ export default function ReportDetailPage() {
             {/* PDF 다운로드 버튼 */}
             <button
               onClick={handleDownloadPDF}
-              className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-xl px-6 md:px-8 py-4 md:py-5 hover:bg-[#252525] transition-colors flex items-center gap-3 w-fit"
+              className="pdf-hide bg-[#1f1f1f] border border-[#d9d9d9] rounded-xl px-6 md:px-8 py-4 md:py-5 hover:bg-[#252525] transition-colors flex items-center gap-3 w-fit"
             >
               <svg
                 className="w-6 h-6 md:w-7 md:h-7 text-white"
@@ -159,11 +240,15 @@ export default function ReportDetailPage() {
           <div className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-2xl p-8 md:p-12 lg:p-16">
             <div className="flex flex-col items-center gap-8 md:gap-12">
               {/* 종합 점수 원형 */}
-              <div className="bg-[#4e6820] border-4 md:border-5 border-[#bbfb4c] rounded-full w-48 md:w-56 lg:w-64 h-48 md:h-56 lg:h-64 flex items-center justify-center">
-                <p className="text-7xl md:text-8xl lg:text-9xl font-bold text-white">
+              <div className="bg-[#4e6820] border-4 md:border-5 border-[#bbfb4c] rounded-full w-48 md:w-56 lg:w-64 h-48 md:h-56 lg:h-64 relative">
+                <span
+                  data-score-center
+                  className="absolute inset-0 flex items-center justify-center text-7xl md:text-8xl lg:text-9xl font-bold text-white leading-none"
+                >
                   {report.overallScore}
-                </p>
+                </span>
               </div>
+
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white text-center">
                 종합 개발자 점수
               </h2>
@@ -257,29 +342,6 @@ export default function ReportDetailPage() {
       {/* 하단 여백 */}
       <div className="h-12 md:h-16" />
     </main>
-  );
-}
-
-// 점수 카드 컴포넌트
-function ScoreCard({ title, score }: { title: string; score: number }) {
-  const progressPercentage = (score / 100) * 100;
-
-  return (
-    <div className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-xl p-6 md:p-8">
-      <div className="flex flex-col gap-4 md:gap-5">
-        <p className="text-6xl md:text-7xl font-bold text-white">{score}</p>
-        <p className="text-lg md:text-xl lg:text-2xl font-bold text-[#d9d9d9]">
-          {title}
-        </p>
-        {/* 진행 바 */}
-        <div className="bg-[#313131] rounded-full h-2 md:h-3 overflow-hidden">
-          <div
-            className="bg-[#bbfb4c] h-full rounded-full transition-all"
-            style={{ width: `${progressPercentage}%` }}
-          />
-        </div>
-      </div>
-    </div>
   );
 }
 
