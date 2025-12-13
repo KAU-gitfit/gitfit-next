@@ -4,7 +4,6 @@ import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation"; //로그인 실패할 경우에 리다이렉트 경로
 import { IconEye, IconCalendar } from "../components/icons";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { mockDeveloperReports } from "@/mock/devReports";
 import { apiGet } from "../lib/api";
 
 //백엔드 API 응답 래퍼 구조
@@ -57,6 +56,7 @@ export default function RepositoriesPage() {
   const [selectedLanguage, setSelectedLanguage] = useState("전체");
   const [sortOrder, setSortOrder] = useState<"latest" | "oldest">("latest");
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   //로그인 토큰 확인 및 백엔드 API 요청
   useEffect(() => {
@@ -92,7 +92,7 @@ export default function RepositoriesPage() {
 
   // 언어 필터링 및 정렬 로직
   const filteredRepositories = useMemo(() => {
-    let filtered =
+    const filtered =
       selectedLanguage === "전체"
         ? repositories
         : repositories.filter((repo) => repo.language === selectedLanguage);
@@ -119,10 +119,57 @@ export default function RepositoriesPage() {
     );
   };
 
-  const handleAnalyze = () => {
-    // 임시로 mockDeveloperReports[0]의 id를 사용하여 상세 리포트 페이지로 이동
-    const reportId = mockDeveloperReports[0].id;
-    router.push(`/reports/${reportId}`);
+  const handleAnalyze = async () => {
+    // 선택된 레포지토리 확인
+    const selectedRepos = repositories.filter((repo) => repo.isSelected);
+    if (selectedRepos.length === 0) {
+      alert("분석할 레포지토리를 선택해주세요.");
+      return;
+    }
+
+    setIsAnalyzing(true);
+    const token = localStorage.getItem("accessToken");
+
+    try {
+      // 선택된 각 레포지토리에 대해 분석 요청
+      const analysisPromises = selectedRepos.map((repo) => {
+        const requestBody = {
+          repositoryId: parseInt(repo.id),
+          repositoryName: repo.name,
+          repositoryFullName: repo.name,
+          defaultBranch: "main",
+        };
+
+        return fetch("https://api.gitfit.site/api/reports/generate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(requestBody),
+        });
+      });
+
+      const responses = await Promise.all(analysisPromises);
+
+      // 모든 응답 확인
+      for (let i = 0; i < responses.length; i++) {
+        if (!responses[i].ok) {
+          console.error(
+            `Failed to generate report for ${selectedRepos[i].name}`
+          );
+        }
+      }
+
+      // 분석 완료 후 리포트 페이지로 이동
+      alert("분석이 완료되었습니다!");
+      router.push("/reports");
+    } catch (error) {
+      console.error("Analysis error:", error);
+      alert("분석 중 오류가 발생했습니다. 다시 시도해주세요.");
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   if (isCheckingAuth) {
@@ -220,10 +267,11 @@ export default function RepositoriesPage() {
         </button>
         <button
           onClick={handleAnalyze}
-          className="bg-[#bbfb4c] border border-[#bbfb4c] rounded-xl md:rounded-xl px-6 md:px-7 lg:px-8 xl:px-9 py-3 md:py-3.5 lg:py-4 xl:py-4 hover:bg-[#a8e535] transition-colors"
+          disabled={isAnalyzing}
+          className="bg-[#bbfb4c] border border-[#bbfb4c] rounded-xl md:rounded-xl px-6 md:px-7 lg:px-8 xl:px-9 py-3 md:py-3.5 lg:py-4 xl:py-4 hover:bg-[#a8e535] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span className="text-lg md:text-lg lg:text-xl xl:text-xl font-medium text-black">
-            분석하기
+            {isAnalyzing ? "분석 중..." : "분석하기"}
           </span>
         </button>
       </div>
