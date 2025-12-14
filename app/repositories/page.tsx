@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation"; //로그인 실패할 경우에 리다이렉트 경로
 import { IconEye, IconCalendar } from "../components/icons";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { apiGet } from "../lib/api";
+import { apiGet, apiPost } from "../lib/api";
 
 //백엔드 API 응답 래퍼 구조
 type ApiResponse<T> = {
@@ -128,38 +128,15 @@ export default function RepositoriesPage() {
     }
 
     setIsAnalyzing(true);
-    const token = localStorage.getItem("accessToken");
 
     try {
-      // 선택된 각 레포지토리에 대해 분석 요청
-      const analysisPromises = selectedRepos.map((repo) => {
-        const requestBody = {
-          repositoryId: parseInt(repo.id),
-          repositoryName: repo.name,
-          repositoryFullName: repo.name,
-          defaultBranch: "main",
-        };
+      // 선택된 레포지토리 ID들을 배열로 변환
+      const requestBody = {
+        repositoryIds: selectedRepos.map((repo) => parseInt(repo.id)),
+      };
 
-        return fetch("https://api.gitfit.site/api/reports/generate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(requestBody),
-        });
-      });
-
-      const responses = await Promise.all(analysisPromises);
-
-      // 모든 응답 확인
-      for (let i = 0; i < responses.length; i++) {
-        if (!responses[i].ok) {
-          console.error(
-            `Failed to generate report for ${selectedRepos[i].name}`
-          );
-        }
-      }
+      // 한 번의 API 요청으로 모든 레포지토리 분석 요청
+      await apiPost("/api/reports/generate", requestBody, true);
 
       // 분석 완료 후 리포트 페이지로 이동
       alert("분석이 완료되었습니다!");
