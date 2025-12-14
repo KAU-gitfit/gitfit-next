@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { IconFileText } from "@/components/icons";
-import { mockDeveloperReports, DeveloperReport } from "@/mock/devReports";
+import { getReports, deleteReport } from "@/lib/api/report";
+import type { Report } from "@/lib/types/report";
 import Image from "next/image";
 
 // EmptyState 컴포넌트
@@ -41,48 +42,90 @@ function EmptyState() {
 }
 
 // ReportCard 컴포넌트
-function ReportCard({ report }: { report: DeveloperReport }) {
+function ReportCard({
+  report,
+  onDelete,
+}: {
+  report: Report;
+  onDelete: (id: string) => void;
+}) {
   const router = useRouter();
 
-  return (
-    <button
-      onClick={() => router.push(`/reports/${report.id}`)}
-      className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-xl md:rounded-2xl p-8 md:p-10 lg:p-12 xl:p-12 hover:bg-[#252525] transition-colors w-full text-left"
-    >
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 md:gap-8 lg:gap-10">
-        <div className="flex flex-col gap-4 md:gap-5 lg:gap-6 flex-1">
-          <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">
-            {report.repoName} 리포트
-          </h3>
-          <div className="flex flex-wrap items-center gap-3 md:gap-4">
-            <div className="bg-[#4e6820] border border-[#bbfb4c] rounded-xl px-4 md:px-6 py-2 md:py-2.5">
-              <p className="text-[#bbfb4c] font-bold text-sm md:text-base lg:text-lg">
-                {report.language}
-              </p>
-            </div>
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!confirm("정말 이 리포트를 삭제하시겠습니까?")) return;
 
-            <div className="flex items-center gap-2 md:gap-3">
-              <Image
-                src="/Calendar.svg"
-                alt="생성일 아이콘"
-                width={16}
-                height={16}
-                className="w-4 h-4 md:w-5 md:h-5"
-              />
-              <p className="text-[#d9d9d9] font-semibold text-sm md:text-base lg:text-lg">
-                생성일자: {report.createdAt}
-              </p>
+    try {
+      await deleteReport(report.id);
+      onDelete(report.id);
+    } catch (error) {
+      console.error("Delete error:", error);
+      alert("삭제 중 오류가 발생했습니다.");
+    }
+  };
+
+  return (
+    <div className="relative group">
+      <button
+        onClick={() => router.push(`/reports/${report.id}`)}
+        className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-xl md:rounded-2xl p-8 md:p-10 lg:p-12 xl:p-12 hover:bg-[#252525] transition-colors w-full text-left"
+      >
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 md:gap-8 lg:gap-10">
+          <div className="flex flex-col gap-4 md:gap-5 lg:gap-6 flex-1">
+            <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">
+              {report.repoName} 리포트
+            </h3>
+            <div className="flex flex-wrap items-center gap-3 md:gap-4">
+              <div className="bg-[#4e6820] border border-[#bbfb4c] rounded-xl px-4 md:px-6 py-2 md:py-2.5">
+                <p className="text-[#bbfb4c] font-bold text-sm md:text-base lg:text-lg">
+                  {report.language}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 md:gap-3">
+                <Image
+                  src="/Calendar.svg"
+                  alt="생성일 아이콘"
+                  width={16}
+                  height={16}
+                  className="w-4 h-4 md:w-5 md:h-5"
+                />
+                <p className="text-[#d9d9d9] font-semibold text-sm md:text-base lg:text-lg">
+                  생성일자: {report.createdAt}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="bg-[#4e6820] border border-[#bbfb4c] rounded-full w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 flex items-center justify-center flex-shrink-0">
-          <p className="text-white font-bold text-2xl md:text-3xl lg:text-4xl">
-            {report.overallScore}
-          </p>
+          <div className="bg-[#4e6820] border border-[#bbfb4c] rounded-full w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 flex items-center justify-center flex-shrink-0">
+            <p className="text-white font-bold text-2xl md:text-3xl lg:text-4xl">
+              {report.overallScore}
+            </p>
+          </div>
         </div>
-      </div>
-    </button>
+      </button>
+
+      {/* 삭제 버튼 */}
+      <button
+        onClick={handleDelete}
+        className="absolute top-4 right-4 p-2 rounded-lg bg-[#2a2a2a] hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+        title="리포트 삭제"
+      >
+        <svg
+          className="w-5 h-5 text-white"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+          />
+        </svg>
+      </button>
+    </div>
   );
 }
 
@@ -119,25 +162,38 @@ function buildPageItems(current: number, total: number) {
 }
 
 export default function ReportsPage() {
+  const [reports, setReports] = useState<Report[]>([]);
   const [sortOrder, setSortOrder] = useState<"latest" | "oldest">("latest");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
+  // 리포트 목록 조회
+  useEffect(() => {
+    getReports()
+      .then((data) => setReports(data))
+      .catch((err) => console.error(err));
+  }, []);
+
+  // 리포트 삭제 핸들러
+  const handleDeleteReport = (id: string) => {
+    setReports((prev) => prev.filter((r) => r.id !== id));
+  };
 
   const toggleSortOrder = () => {
     setSortOrder((prev) => (prev === "latest" ? "oldest" : "latest"));
     setCurrentPage(1);
   };
 
-  // ✅ 정렬된 전체 리스트
+  // 정렬된 전체 리스트
   const sortedReports = useMemo(() => {
-    const arr = [...mockDeveloperReports];
+    const arr = [...reports];
     arr.sort((a, b) => {
       const ta = toTime(a.createdAt);
       const tb = toTime(b.createdAt);
       return sortOrder === "latest" ? tb - ta : ta - tb;
     });
     return arr;
-  }, [sortOrder]);
+  }, [reports, sortOrder]);
 
   // ✅ totalPages는 데이터 많아지면 자동으로 늘어남
   const totalPages = Math.max(
@@ -197,7 +253,7 @@ export default function ReportsPage() {
           <>
             <div className="flex flex-col gap-6 md:gap-8 lg:gap-10">
               {pagedReports.map((report) => (
-                <ReportCard key={report.id} report={report} />
+                <ReportCard key={report.id} report={report} onDelete={handleDeleteReport} />
               ))}
             </div>
 

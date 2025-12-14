@@ -21,7 +21,7 @@ export async function apiGet<T>(url: string): Promise<T> {
 export async function apiPost<T>(
   url: string,
   body: unknown,
-  includeAuth: boolean = false
+  includeAuth: boolean = true
 ): Promise<T> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -37,7 +37,7 @@ export async function apiPost<T>(
   const res = await fetch(`${API_BASE_URL}${url}`, {
     method: "POST",
     headers,
-    body: JSON.stringify(body),
+    body: body ? JSON.stringify(body) : undefined,
   });
 
   if (!res.ok) {
@@ -45,4 +45,20 @@ export async function apiPost<T>(
   }
 
   return res.json();
+}
+
+export async function apiDelete(url: string): Promise<void> {
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+
+  const res = await fetch(`${API_BASE_URL}${url}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error(`API request failed: ${res.status}`);
+  }
 }

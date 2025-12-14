@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { IconEye, IconCalendar } from "@/components/icons";
-import { getRepositories, analyzeRepositories } from "@/lib/api/repository";
+import { getRepositories } from "@/lib/api/repository";
+import { generateReport, getReportStatus } from "@/lib/api/report";
 import type { Repository } from "@/lib/types/repository";
+import type { ReportStatus } from "@/lib/types/report";
 
 const languages = [
   "전체",
@@ -19,6 +21,89 @@ const languages = [
   "Django",
 ];
 
+// 로딩 메시지 (폴링마다 변경)
+const loadingMessages = [
+  "코드 구조를 분석하고 있습니다...",
+  "품질 지표를 측정하고 있습니다...",
+  "테스트 커버리지를 확인하고 있습니다...",
+  "문서화 수준을 평가하고 있습니다...",
+  "AI가 인사이트를 생성하고 있습니다...",
+  "최종 리포트를 작성하고 있습니다...",
+];
+
+// 로딩 오버레이 컴포넌트
+function LoadingOverlay({
+  progress,
+  status,
+  messageIndex,
+}: {
+  progress: number;
+  status: ReportStatus | null;
+  messageIndex: number;
+}) {
+  const statusText = status === "PROCESSING" ? "분석 중" : "준비 중";
+  const message = loadingMessages[messageIndex % loadingMessages.length];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* 어두운 배경 */}
+      <div className="absolute inset-0 bg-black/70" />
+
+      {/* 로딩 컨텐츠 */}
+      <div className="relative z-10 flex flex-col items-center gap-8 px-8">
+        {/* 스피너 */}
+        <div className="relative w-32 h-32">
+          {/* 배경 원 */}
+          <svg className="w-full h-full" viewBox="0 0 100 100">
+            <circle
+              cx="50"
+              cy="50"
+              r="42"
+              fill="none"
+              stroke="#313131"
+              strokeWidth="8"
+            />
+            {/* 진행 원 */}
+            <circle
+              cx="50"
+              cy="50"
+              r="42"
+              fill="none"
+              stroke="#bbfb4c"
+              strokeWidth="8"
+              strokeLinecap="round"
+              strokeDasharray={`${2 * Math.PI * 42}`}
+              strokeDashoffset={`${2 * Math.PI * 42 * (1 - progress / 100)}`}
+              className="transition-all duration-500 ease-out"
+              style={{ transform: "rotate(-90deg)", transformOrigin: "center" }}
+            />
+          </svg>
+          {/* 퍼센트 텍스트 */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-3xl font-bold text-white">{progress}%</span>
+          </div>
+        </div>
+
+        {/* 상태 텍스트 */}
+        <div className="flex flex-col items-center gap-3">
+          <p className="text-2xl font-bold text-white">{statusText}</p>
+          <p className="text-lg text-[#d9d9d9] text-center max-w-md animate-pulse">
+            {message}
+          </p>
+        </div>
+
+        {/* 프로그레스 바 */}
+        <div className="w-80 bg-[#313131] rounded-full h-3 overflow-hidden">
+          <div
+            className="bg-[#bbfb4c] h-full rounded-full transition-all duration-500 ease-out"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function RepositoriesPage() {
   const router = useRouter();
 
@@ -27,6 +112,9 @@ export default function RepositoriesPage() {
   const [selectedLanguage, setSelectedLanguage] = useState("전체");
   const [sortOrder, setSortOrder] = useState<"latest" | "oldest">("latest");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisProgress, setAnalysisProgress] = useState(0);
+  const [analysisStatus, setAnalysisStatus] = useState<ReportStatus | null>(null);
+  const [messageIndex, setMessageIndex] = useState(0);
 
   // 레포지토리 목록 조회
   useEffect(() => {
@@ -34,6 +122,40 @@ export default function RepositoriesPage() {
       .then((repos) => setRepositories(repos))
       .catch((err) => console.error(err));
   }, []);
+
+  // 리포트 상태 폴링
+  const pollReportStatus = useCallback(
+    async (reportId: number) => {
+      const POLL_INTERVAL = 2000; // 2초
+      const MAX_POLLS = 150; // 최대 5분 (2초 * 150)
+
+      for (let i = 0; i < MAX_POLLS; i++) {
+        try {
+          const status = await getReportStatus(reportId.toString());
+          setAnalysisProgress(status.progress);
+          setAnalysisStatus(status.status);
+
+          if (status.status === "COMPLETED") {
+            return { success: true, reportId };
+          }
+
+          if (status.status === "FAILED") {
+            return { success: false, error: status.errorMessage || "분석 실패" };
+          }
+
+          // PENDING 또는 PROCESSING 상태면 계속 폴링
+          setMessageIndex((prev) => prev + 1);
+          await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL));
+        } catch (error) {
+          console.error("Status polling error:", error);
+          return { success: false, error: "상태 조회 실패" };
+        }
+      }
+
+      return { success: false, error: "시간 초과" };
+    },
+    []
+  );
 
   // 언어 필터링 및 정렬 로직
   const filteredRepositories = useMemo(() => {
@@ -72,23 +194,44 @@ export default function RepositoriesPage() {
     }
 
     setIsAnalyzing(true);
+    setAnalysisProgress(0);
+    setAnalysisStatus("PENDING");
+    setMessageIndex(0);
 
     try {
       const repositoryIds = selectedRepos.map((repo) => parseInt(repo.id));
-      await analyzeRepositories(repositoryIds);
+      const response = await generateReport(repositoryIds);
 
-      alert("분석이 완료되었습니다!");
-      router.push("/reports");
+      // 폴링으로 상태 확인
+      const result = await pollReportStatus(response.reportId);
+
+      if (result.success) {
+        router.push(`/reports/${result.reportId}`);
+      } else {
+        alert(`분석 실패: ${result.error}`);
+      }
     } catch (error) {
       console.error("Analysis error:", error);
-      alert("분석 중 오류가 발생했습니다. 다시 시도해주세요.");
+      const errorMessage = error instanceof Error ? error.message : "알 수 없는 오류";
+      alert(`분석 중 오류가 발생했습니다.\n\n${errorMessage}`);
     } finally {
       setIsAnalyzing(false);
+      setAnalysisProgress(0);
+      setAnalysisStatus(null);
     }
   };
 
   return (
     <div className="bg-[#181818] min-h-screen pt-16 md:pt-18 lg:pt-20 xl:pt-20">
+      {/* 로딩 오버레이 */}
+      {isAnalyzing && (
+        <LoadingOverlay
+          progress={analysisProgress}
+          status={analysisStatus}
+          messageIndex={messageIndex}
+        />
+      )}
+
       {/* Title Section */}
       <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-4 md:py-6 lg:py-6 min-h-[120px] md:min-h-[140px] lg:min-h-[150px] flex items-end mb-10 md:mb-12 lg:mb-16 xl:mb-16 mt-16 md:mt-18 lg:mt-20 xl:mt-20">
         <div className="flex flex-col gap-4 md:gap-5 lg:gap-6 text-white w-full max-w-4xl">

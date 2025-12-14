@@ -1,11 +1,10 @@
 "use client";
 
-//import { useRouter, useParams } from "next/navigation";
 import { useParams } from "next/navigation";
-//import Link from "next/link";
-import { mockDeveloperReports } from "@/mock/devReports";
 import { useRef, useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { getReportDetail } from "@/lib/api/report";
+import type { Report } from "@/lib/types/report";
 
 // 점수 카드 컴포넌트
 function ScoreCard({
@@ -75,14 +74,19 @@ function ScoreCard({
 }
 
 export default function ReportDetailPage() {
-  //  const router = useRouter();
   const params = useParams();
   const reportId = params.id as string;
   const contentRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
+  const [report, setReport] = useState<Report | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // mock 데이터에서 해당 id의 리포트 찾기
-  const report = mockDeveloperReports.find((r) => r.id === reportId);
+  useEffect(() => {
+    getReportDetail(reportId)
+      .then((data) => setReport(data))
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
+  }, [reportId]);
 
   const displayName = user?.displayName || user?.githubUsername || "개발자";
 
@@ -255,85 +259,85 @@ export default function ReportDetailPage() {
         {/* 세부 점수 카드 섹션 */}
         <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-8 md:py-10">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            {/* 코드 품질 */}
-            <ScoreCard title="코드 품질" score={report.scores.codeQuality} />
-            {/* 협업 */}
-            <ScoreCard title="협업" score={report.scores.collaboration} />
-            {/* 꾸준함 */}
-            <ScoreCard title="꾸준함" score={report.scores.consistency} />
-            {/* 성장 */}
-            <ScoreCard title="성장" score={report.scores.growth} />
+            <ScoreCard title="구조" score={report.scores.structure} />
+            <ScoreCard title="품질" score={report.scores.quality} />
+            <ScoreCard title="테스트" score={report.scores.testing} />
+            <ScoreCard title="문서화" score={report.scores.documentation} />
           </div>
         </div>
 
-        {/* 인재 분석 섹션 */}
-        <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-8 md:py-10">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 md:mb-10">
-            인재 분석
-          </h2>
-          <div className="flex flex-col gap-6 md:gap-8">
-            {report.analysis.talent.map((card, idx) => (
-              <AnalysisCardComponent key={idx} card={card} />
-            ))}
-          </div>
-        </div>
+        {report.analysis && (
+          <>
+            {/* 인재 분석 섹션 */}
+            <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-8 md:py-10">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 md:mb-10">
+                인재 분석
+              </h2>
+              <div className="flex flex-col gap-6 md:gap-8">
+                {report.analysis.talent.map((card, idx) => (
+                  <AnalysisCardComponent key={idx} card={card} />
+                ))}
+              </div>
+            </div>
 
-        {/* 강점 분석 섹션 */}
-        <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-8 md:py-10">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 md:mb-10">
-            강점 분석
-          </h2>
-          <div className="flex flex-col gap-6 md:gap-8">
-            {report.analysis.strengths.map((card, idx) => (
-              <AnalysisCardComponent key={idx} card={card} />
-            ))}
-          </div>
-        </div>
+            {/* 강점 분석 섹션 */}
+            <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-8 md:py-10">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 md:mb-10">
+                강점 분석
+              </h2>
+              <div className="flex flex-col gap-6 md:gap-8">
+                {report.analysis.strengths.map((card, idx) => (
+                  <AnalysisCardComponent key={idx} card={card} />
+                ))}
+              </div>
+            </div>
 
-        {/* 약점 분석 섹션 */}
-        <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-8 md:py-10">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 md:mb-10">
-            약점 분석
-          </h2>
-          <div className="flex flex-col gap-6 md:gap-8">
-            {report.analysis.weaknesses.map((card, idx) => (
-              <AnalysisCardComponent key={idx} card={card} />
-            ))}
-          </div>
-        </div>
+            {/* 약점 분석 섹션 */}
+            <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-8 md:py-10">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 md:mb-10">
+                약점 분석
+              </h2>
+              <div className="flex flex-col gap-6 md:gap-8">
+                {report.analysis.weaknesses.map((card, idx) => (
+                  <AnalysisCardComponent key={idx} card={card} />
+                ))}
+              </div>
+            </div>
 
-        {/* 위험 신호 감지 섹션 */}
-        <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-8 md:py-10">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 md:mb-10">
-            위험 신호 감지
-          </h2>
-          <div className="flex flex-col gap-6 md:gap-8">
-            {report.analysis.signals.map((card, idx) => (
-              <AnalysisCardComponent key={idx} card={card} />
-            ))}
-          </div>
-        </div>
+            {/* 위험 신호 감지 섹션 */}
+            <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-8 md:py-10">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 md:mb-10">
+                위험 신호 감지
+              </h2>
+              <div className="flex flex-col gap-6 md:gap-8">
+                {report.analysis.signals.map((card, idx) => (
+                  <AnalysisCardComponent key={idx} card={card} />
+                ))}
+              </div>
+            </div>
 
-        {/* AI 추천 실천 가이드 섹션 */}
-        <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-8 md:py-10">
-          <div className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-2xl p-8 md:p-12 lg:p-16">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 md:mb-10">
-              AI 추천 실천 가이드
-            </h2>
-            <ol className="space-y-4 md:space-y-6 lg:space-y-8">
-              {report.analysis.recommendations.map((recommendation, idx) => (
-                <li key={idx} className="flex items-start gap-4 md:gap-6">
-                  <span className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#bbfb4c] flex-shrink-0">
-                    {idx + 1}.
-                  </span>
-                  <span className="text-xl md:text-2xl lg:text-3xl font-bold text-white pt-1">
-                    {recommendation}
-                  </span>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
+            {/* AI 추천 실천 가이드 섹션 */}
+            <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-8 md:py-10">
+              <div className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-2xl p-8 md:p-12 lg:p-16">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 md:mb-10">
+                  AI 추천 실천 가이드
+                </h2>
+                <ol className="space-y-4 md:space-y-6 lg:space-y-8">
+                  {report.analysis.recommendations.map((recommendation, idx) => (
+                    <li key={idx} className="flex items-start gap-4 md:gap-6">
+                      <span className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#bbfb4c] flex-shrink-0">
+                        {idx + 1}.
+                      </span>
+                      <span className="text-xl md:text-2xl lg:text-3xl font-bold text-white pt-1">
+                        {recommendation}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </div>
+          </>
+        )}
       </div>
       {/* 하단 여백 */}
       <div className="h-12 md:h-16" />
