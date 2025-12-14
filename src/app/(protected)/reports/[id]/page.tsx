@@ -46,16 +46,16 @@ function ScoreCard({
   return (
     <div
       ref={ref}
-      className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-xl p-6 md:p-8"
+      className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-xl p-4 md:p-6"
     >
-      <div className="flex flex-col gap-4 md:gap-5">
-        <p className="text-6xl md:text-7xl font-bold text-white">{score}</p>
-        <p className="text-lg md:text-xl lg:text-2xl font-bold text-[#d9d9d9]">
+      <div className="flex flex-col gap-3 md:gap-4">
+        <p className="text-4xl md:text-5xl font-bold text-white">{score}</p>
+        <p className="text-base md:text-lg font-bold text-[#d9d9d9]">
           {title}
         </p>
 
         {/* 진행 바 */}
-        <div className="bg-[#313131] rounded-full h-2 md:h-3 overflow-hidden">
+        <div className="bg-[#313131] rounded-full h-2 overflow-hidden">
           <div
             className="bg-[#bbfb4c] h-full rounded-full"
             style={{
@@ -180,18 +180,18 @@ export default function ReportDetailPage() {
 
   return (
     <main className="bg-[#181818] min-h-screen pt-16 md:pt-18 lg:pt-20 xl:pt-20">
-      <div ref={contentRef}>
+      <div ref={contentRef} className="pt-16 pb-12 max-w-7xl mx-auto">
         {/* 헤더 섹션 */}
-        <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-8 md:py-10">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+        <div className="px-4 md:px-6 lg:px-8 mb-10">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 md:gap-6">
             <div className="flex-1">
-              <div className="flex items-center gap-4 mb-6">
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white">
+              <div className="flex items-center gap-3 mb-4">
+                <h1 className="text-3xl md:text-4xl lg:text-4xl font-bold text-white">
                   개발자 리포트
                 </h1>
-                <button className="pdf-hide p-2 hover:bg-[#2a2a2a] rounded-lg transition-colors">
+                <button className="pdf-hide p-1.5 hover:bg-[#2a2a2a] rounded-lg transition-colors">
                   <svg
-                    className="w-8 h-8 md:w-10 md:h-10 text-white"
+                    className="w-6 h-6 md:w-7 md:h-7 text-white"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -205,7 +205,7 @@ export default function ReportDetailPage() {
                   </svg>
                 </button>
               </div>
-              <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#d9d9d9]">
+              <p className="text-lg md:text-xl lg:text-2xl font-bold text-[#d9d9d9]">
                 {displayName}님의 분석 결과
               </p>
             </div>
@@ -213,10 +213,10 @@ export default function ReportDetailPage() {
             {/* PDF 다운로드 버튼 */}
             <button
               onClick={handleDownloadPDF}
-              className="pdf-hide bg-[#1f1f1f] border border-[#d9d9d9] rounded-xl px-6 md:px-8 py-4 md:py-5 hover:bg-[#252525] transition-colors flex items-center gap-3 w-fit"
+              className="pdf-hide bg-[#1f1f1f] border border-[#d9d9d9] rounded-xl px-4 md:px-5 py-2.5 md:py-3 hover:bg-[#252525] transition-colors flex items-center gap-2 w-fit"
             >
               <svg
-                className="w-6 h-6 md:w-7 md:h-7 text-white"
+                className="w-5 h-5 md:w-6 md:h-6 text-white"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -228,7 +228,7 @@ export default function ReportDetailPage() {
                   d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
                 />
               </svg>
-              <span className="text-lg md:text-xl font-semibold text-white">
+              <span className="text-sm md:text-base font-semibold text-white">
                 PDF 다운로드
               </span>
             </button>
@@ -236,20 +236,20 @@ export default function ReportDetailPage() {
         </div>
 
         {/* 종합 점수 섹션 */}
-        <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-8 md:py-10">
-          <div className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-2xl p-8 md:p-12 lg:p-16">
-            <div className="flex flex-col items-center gap-8 md:gap-12">
+        <div className="px-4 md:px-6 lg:px-8 mb-8">
+          <div className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-2xl p-6 md:p-8 lg:p-10">
+            <div className="flex flex-col items-center gap-6 md:gap-8">
               {/* 종합 점수 원형 */}
-              <div className="bg-[#4e6820] border-4 md:border-5 border-[#bbfb4c] rounded-full w-48 md:w-56 lg:w-64 h-48 md:h-56 lg:h-64 relative">
+              <div className="bg-[#4e6820] border-4 border-[#bbfb4c] rounded-full w-32 md:w-40 lg:w-48 h-32 md:h-40 lg:h-48 relative">
                 <span
                   data-score-center
-                  className="absolute inset-0 flex items-center justify-center text-7xl md:text-8xl lg:text-9xl font-bold text-white leading-none"
+                  className="absolute inset-0 flex items-center justify-center text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-none"
                 >
                   {report.overallScore}
                 </span>
               </div>
 
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white text-center">
+              <h2 className="text-2xl md:text-3xl lg:text-3xl font-bold text-white text-center">
                 종합 개발자 점수
               </h2>
             </div>
@@ -257,8 +257,8 @@ export default function ReportDetailPage() {
         </div>
 
         {/* 세부 점수 카드 섹션 */}
-        <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-8 md:py-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        <div className="px-4 md:px-6 lg:px-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
             <ScoreCard title="구조" score={report.scores.structure} />
             <ScoreCard title="품질" score={report.scores.quality} />
             <ScoreCard title="테스트" score={report.scores.testing} />
@@ -269,11 +269,11 @@ export default function ReportDetailPage() {
         {report.analysis && (
           <>
             {/* 인재 분석 섹션 */}
-            <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-8 md:py-10">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 md:mb-10">
+            <div className="px-4 md:px-6 lg:px-8 mb-8">
+              <h2 className="text-2xl md:text-3xl lg:text-3xl font-bold text-white mb-5 md:mb-6">
                 인재 분석
               </h2>
-              <div className="flex flex-col gap-6 md:gap-8">
+              <div className="flex flex-col gap-4 md:gap-5">
                 {report.analysis.talent.map((card, idx) => (
                   <AnalysisCardComponent key={idx} card={card} />
                 ))}
@@ -281,11 +281,11 @@ export default function ReportDetailPage() {
             </div>
 
             {/* 강점 분석 섹션 */}
-            <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-8 md:py-10">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 md:mb-10">
+            <div className="px-4 md:px-6 lg:px-8 mb-8">
+              <h2 className="text-2xl md:text-3xl lg:text-3xl font-bold text-white mb-5 md:mb-6">
                 강점 분석
               </h2>
-              <div className="flex flex-col gap-6 md:gap-8">
+              <div className="flex flex-col gap-4 md:gap-5">
                 {report.analysis.strengths.map((card, idx) => (
                   <AnalysisCardComponent key={idx} card={card} />
                 ))}
@@ -293,11 +293,11 @@ export default function ReportDetailPage() {
             </div>
 
             {/* 약점 분석 섹션 */}
-            <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-8 md:py-10">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 md:mb-10">
+            <div className="px-4 md:px-6 lg:px-8 mb-8">
+              <h2 className="text-2xl md:text-3xl lg:text-3xl font-bold text-white mb-5 md:mb-6">
                 약점 분석
               </h2>
-              <div className="flex flex-col gap-6 md:gap-8">
+              <div className="flex flex-col gap-4 md:gap-5">
                 {report.analysis.weaknesses.map((card, idx) => (
                   <AnalysisCardComponent key={idx} card={card} />
                 ))}
@@ -305,11 +305,11 @@ export default function ReportDetailPage() {
             </div>
 
             {/* 위험 신호 감지 섹션 */}
-            <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-8 md:py-10">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 md:mb-10">
+            <div className="px-4 md:px-6 lg:px-8 mb-8">
+              <h2 className="text-2xl md:text-3xl lg:text-3xl font-bold text-white mb-5 md:mb-6">
                 위험 신호 감지
               </h2>
-              <div className="flex flex-col gap-6 md:gap-8">
+              <div className="flex flex-col gap-4 md:gap-5">
                 {report.analysis.signals.map((card, idx) => (
                   <AnalysisCardComponent key={idx} card={card} />
                 ))}
@@ -317,18 +317,18 @@ export default function ReportDetailPage() {
             </div>
 
             {/* AI 추천 실천 가이드 섹션 */}
-            <div className="px-4 md:px-8 lg:px-12 xl:px-16 py-8 md:py-10">
-              <div className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-2xl p-8 md:p-12 lg:p-16">
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 md:mb-10">
+            <div className="px-4 md:px-6 lg:px-8 mb-8">
+              <div className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-2xl p-6 md:p-8 lg:p-10">
+                <h2 className="text-2xl md:text-3xl lg:text-3xl font-bold text-white mb-5 md:mb-6">
                   AI 추천 실천 가이드
                 </h2>
-                <ol className="space-y-4 md:space-y-6 lg:space-y-8">
+                <ol className="space-y-3 md:space-y-4">
                   {report.analysis.recommendations.map((recommendation, idx) => (
-                    <li key={idx} className="flex items-start gap-4 md:gap-6">
-                      <span className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#bbfb4c] flex-shrink-0">
+                    <li key={idx} className="flex items-start gap-3 md:gap-4">
+                      <span className="text-lg md:text-xl lg:text-2xl font-bold text-[#bbfb4c] flex-shrink-0">
                         {idx + 1}.
                       </span>
-                      <span className="text-xl md:text-2xl lg:text-3xl font-bold text-white pt-1">
+                      <span className="text-base md:text-lg lg:text-xl font-bold text-white pt-0.5">
                         {recommendation}
                       </span>
                     </li>
@@ -339,8 +339,6 @@ export default function ReportDetailPage() {
           </>
         )}
       </div>
-      {/* 하단 여백 */}
-      <div className="h-12 md:h-16" />
     </main>
   );
 }
@@ -355,12 +353,12 @@ function AnalysisCardComponent({
   };
 }) {
   return (
-    <div className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-xl p-8 md:p-10 lg:p-12">
-      <div className="flex flex-col gap-4 md:gap-5 lg:gap-6">
-        <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">
+    <div className="bg-[#1f1f1f] border border-[#d9d9d9] rounded-xl p-5 md:p-6">
+      <div className="flex flex-col gap-3 md:gap-4">
+        <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-white">
           {card.title}
         </h3>
-        <p className="text-lg md:text-xl lg:text-2xl text-[#c9c9c9] leading-relaxed">
+        <p className="text-sm md:text-base lg:text-lg text-[#c9c9c9] leading-relaxed">
           {card.description}
         </p>
       </div>
