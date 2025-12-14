@@ -70,6 +70,8 @@ export interface ReportListItem {
   reportId: number;
   repositoryName: string | null;
   repositoryFullName: string | null;
+  language: string | null;
+  overallScore: number | null;
   status: ReportStatus;
   progress: number;
   createdAt: string;

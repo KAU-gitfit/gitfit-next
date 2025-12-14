@@ -101,8 +101,8 @@ function convertListItemToReport(item: ReportListItem): Report {
   return {
     id: item.reportId.toString(),
     repoName: item.repositoryName || "Unknown Repository",
-    language: "Unknown",
-    overallScore: 0,
+    language: item.language || "Unknown",
+    overallScore: item.overallScore || 0,
     scores: { structure: 0, quality: 0, testing: 0, documentation: 0 },
     status: item.status,
     progress: item.progress,
