@@ -1,4 +1,4 @@
-import { apiGet } from "./client";
+import { apiGet, apiDelete } from "./client";
 import { API_BASE_URL, USE_MOCK_DATA } from "@/lib/config";
 import type { User, UserProfileResponse } from "@/lib/types/user";
 
@@ -38,4 +38,13 @@ export function getAccessToken(): string | null {
 // 토큰 삭제
 export function removeAccessToken(): void {
   localStorage.removeItem("accessToken");
+}
+
+// 회원 탈퇴
+export async function deleteAccount(): Promise<void> {
+  if (USE_MOCK_DATA) {
+    return;
+  }
+
+  await apiDelete("/api/users/account");
 }

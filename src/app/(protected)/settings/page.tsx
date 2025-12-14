@@ -1,18 +1,35 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { deleteAccount } from "@/lib/api/auth";
 
 export default function SettingsPage() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleAccountDeletion = () => {
+  const handleAccountDeletion = async () => {
     if (
-      window.confirm(
+      !window.confirm(
         "정말로 계정을 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다."
       )
     ) {
-      alert("계정이 삭제되었습니다.");
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      await deleteAccount();
+      logout();
+      router.push("/home");
+    } catch (error) {
+      console.error("Account deletion failed:", error);
+      alert("계정 삭제에 실패했습니다. 다시 시도해주세요.");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -104,9 +121,10 @@ export default function SettingsPage() {
 
           <button
             onClick={handleAccountDeletion}
-            className="w-full bg-[#191919] border border-[#d9d9d9] rounded-xl py-2.5 md:py-3 hover:bg-[#2a2a2a] transition-colors font-bold text-base md:text-lg text-white"
+            disabled={isDeleting}
+            className="w-full bg-[#191919] border border-[#d9d9d9] rounded-xl py-2.5 md:py-3 hover:bg-[#2a2a2a] transition-colors font-bold text-base md:text-lg text-white disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            계정 탈퇴
+            {isDeleting ? "삭제 중..." : "계정 탈퇴"}
           </button>
         </div>
       </div>
